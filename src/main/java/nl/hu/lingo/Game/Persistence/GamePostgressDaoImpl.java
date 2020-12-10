@@ -6,10 +6,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameRepositoryPostgress implements GameRepository {
+public class GamePostgressDaoImpl implements GameDao {
     private Connection conn = null;
 
-    public GameRepositoryPostgress(Database database) {
+    public GamePostgressDaoImpl(Database database) {
         conn = database.getConn();
     }
 

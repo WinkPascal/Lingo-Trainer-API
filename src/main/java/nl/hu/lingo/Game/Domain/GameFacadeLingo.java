@@ -3,9 +3,9 @@ package nl.hu.lingo.Game.Domain;
 import java.util.List;
 
 public class GameFacadeLingo {
-    private GameRepository gameRepository;
+    private GameDao gameRepository;
 
-    public GameFacadeLingo(GameRepository gameRepository){
+    public GameFacadeLingo(GameDao gameRepository){
         this.gameRepository = gameRepository;
     }
 
@@ -16,6 +16,7 @@ public class GameFacadeLingo {
     public List<String> nextMove(int gameId, String word) {
         Game game = gameRepository.getGameById(gameId);
         Try currentTry = new Try(0, word);
+
         game.nextMove(currentTry);
         return null;
     }

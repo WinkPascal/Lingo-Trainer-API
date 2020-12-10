@@ -3,7 +3,7 @@ package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.DataBasePostgress;
 import nl.hu.lingo.Game.Persistence.Database;
-import nl.hu.lingo.Game.Persistence.GameRepositoryPostgress;
+import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 @SpringBootTest
 class GameFacadeTest {
@@ -21,7 +20,7 @@ class GameFacadeTest {
     void startGame(){
         Database database = new DataBasePostgress();
 
-        GameRepository gameRepo = new GameRepositoryPostgress(database);
+        GameDao gameRepo = new GamePostgressDaoImpl(database);
 
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepo);
 
@@ -42,7 +41,15 @@ class GameFacadeTest {
 
         Assert.isTrue(maxIdOfGames == id);
     }
+    @Test
+    void WrongGameIdnextMove(){
+        Database database = new DataBasePostgress();
 
+        GameDao gameRepo = new GamePostgressDaoImpl(database);
 
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepo);
+
+        gameFacade.nextMove(0, "test");
+    }
 
 }

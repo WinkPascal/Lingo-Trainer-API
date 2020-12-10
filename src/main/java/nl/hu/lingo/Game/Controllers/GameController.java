@@ -3,7 +3,7 @@ package nl.hu.lingo.Game.Controllers;
 import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Game.Persistence.DataBasePostgress;
 import nl.hu.lingo.Game.Persistence.Database;
-import nl.hu.lingo.Game.Persistence.GameRepositoryPostgress;
+import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ public class GameController {
     @GetMapping("/startGame")
     public int startGame(){
         Database database = new DataBasePostgress();
-        GameRepository gameRepository = new GameRepositoryPostgress(database);
+        GameDao gameRepository = new GamePostgressDaoImpl(database);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
 
         int id = gameFacade.startGame();
@@ -31,7 +31,7 @@ public class GameController {
     @GetMapping("/nextMove")
     public String nextMove(int gameId, String word) {
         Database database = new DataBasePostgress();
-        GameRepository gameRepository = new GameRepositoryPostgress(database);
+        GameDao gameRepository = new GamePostgressDaoImpl(database);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
 
         List<String> feedback = gameFacade.nextMove(gameId, word);
@@ -41,7 +41,7 @@ public class GameController {
     @GetMapping("/gameFinished")
     public String gameFinished(int id, String userName) {
         Database database = new DataBasePostgress();
-        GameRepository gameRepository = new GameRepositoryPostgress(database);
+        GameDao gameRepository = new GamePostgressDaoImpl(database);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
 
         int score = gameFacade.gameFinished(id, userName);

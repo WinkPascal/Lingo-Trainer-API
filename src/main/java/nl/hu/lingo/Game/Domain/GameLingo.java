@@ -1,16 +1,6 @@
 package nl.hu.lingo.Game.Domain;
 
-import nl.hu.lingo.Game.Persistence.GameRepositoryPostgress;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class GameLingo implements Game {
     private int id;
@@ -30,8 +20,23 @@ public class GameLingo implements Game {
 
     @Override
     public List<String> nextMove(Try currentTry) {
+        Round round = getCurrentRound();
+        round.IsCorrect(currentTry);
         return null;
     }
+    private Round getCurrentRound(){
+        int highestId= 0;
+        Round newestRound = null;
+        for (Round round : rounds) {
+            int roundId  = round.getId();
+            if(highestId < roundId){
+                newestRound = round;
+            }
+        }
+        return newestRound;
+    }
+
+
 
     @Override
     public int endGame() {

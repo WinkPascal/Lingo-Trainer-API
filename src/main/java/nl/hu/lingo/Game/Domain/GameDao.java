@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-public interface GameRepository {
+public interface GameDao {
     Game getGameById(int id);
 
     int saveGame();
