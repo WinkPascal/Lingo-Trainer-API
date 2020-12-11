@@ -14,18 +14,20 @@ public class Try {
     private int id;
     private String word;
     private WordServiceInterface wordService;
+    private TryDao tryDao;
 
-    public Try(int id, String word, WordServiceInterface wordService){
+    public Try(int id, String word, WordServiceInterface wordService, TryDao tryDao){
         this.id = id;
         this.word = word;
         this.wordService = wordService;
+        this.tryDao = tryDao;
     }
 
     public boolean WordExists(){
         List<String> words = wordService.getAllWordsWithLength(word.length());
         if(words != null){
             for (String word : words) {
-                if(word == this.word){
+                if(word.equals(this.word)){
                     return true;
                 }
             }
@@ -35,6 +37,10 @@ public class Try {
 
     public boolean wordIsLength(int length) {
         return this.word.length() == length;
+    }
+
+    public void save(int RoundId){
+        tryDao.save(RoundId, word);
     }
 
     public boolean IsCorrectlySpelled() {
@@ -58,15 +64,16 @@ public class Try {
         int lettersWrong = 0;
         for (int i = 0;i < this.word.length(); i++){
             char currentLetter = this.word.charAt(i);
+            String key = Integer.toString(i)+":"+String.valueOf(currentLetter);
 
             if(correctWord.charAt(i) == currentLetter){
-                feedback.put(String.valueOf(currentLetter), " correct");
+                feedback.put(key, " correct");
                 lettersCorrect ++;
             } else if(letterInWord(correctWord, currentLetter)){
-                feedback.put(String.valueOf(currentLetter), " In woord");
+                feedback.put(key, " In woord");
                 lettersInWord++;
             } else{
-                feedback.put(String.valueOf(currentLetter), " Is niet in woord");
+                feedback.put(key, " Is niet in woord");
                 lettersWrong++;
             }
         }

@@ -27,37 +27,54 @@ public class GameLingo implements Game {
         return null;
     }
 
-    @Override
-    public Map<String, String> nextMove(Try currentTry) {
-        Round currentRound = null;
+    private Round getLastRound(){
+        Round lastRound = null;
+        int biggestId = 0;
         for (Round round : rounds) {
-            if(round.isActive()){
-                currentRound = round;
+            int roundId = round.getId();
+            if (biggestId < roundId) {
+                lastRound = round;
             }
         }
+        return lastRound;
+    }
+
+    @Override
+    public Map<String, String> nextMove(Try currentTry) {
+        Round currentRound = getLastRound();
 
         Map<String, String> feedback = new HashMap<>();
         if(currentRound == null){
             feedback.put("status", "Game over, call endGame method to save name.");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
-            if(feedback.get("lettersWrong") == "0"){
-                int nextWordLength= 0;
-                if(feedback.get("lettersCorrect") == "5") nextWordLength = 6;
-                if(feedback.get("lettersCorrect") == "6") nextWordLength = 7;
-                if(feedback.get("lettersCorrect") == "7") nextWordLength = 5;
+            if(feedback.get("invalid").equals("true")){
+                return feedback;
+            } else{
+                if(feedback.get("lettersWrong").equals("0")) {
+                    int nextWordLength = 0;
+                    if (feedback.get("lettersCorrect").equals("5")) nextWordLength = 6;
+                    if (feedback.get("lettersCorrect").equals("6")) nextWordLength = 7;
+                    if (feedback.get("lettersCorrect").equals("7")) nextWordLength = 5;
 
-                String word = newRound(nextWordLength);
-                feedback.replace("Letters in word", Integer.toString(word.length()));
-                feedback.replace("Tries left", Integer.toString(nextWordLength));
+                    String word = newRound(nextWordLength);
+                    feedback.replace("Letters in word", Integer.toString(word.length()));
+                    feedback.replace("Tries left", "5");
+                }
             }
         }
         return feedback;
     }
 
     @Override
-    public int endGame() {
-        return 0;
+    public int endGame(String name) {
+        Round lastRound = getLastRound();
+        if(!lastRound.isActive()){
+            return 0;
+        } else{
+            gameDao.saveName(this.id, name);
+            return gameDao.getScore(this.id);
+        }
     }
 
     @Override

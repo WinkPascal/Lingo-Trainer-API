@@ -4,6 +4,7 @@ import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Game.Persistence.DataBasePostgress;
 import nl.hu.lingo.Game.Persistence.Database;
 import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
+import nl.hu.lingo.Game.Persistence.TryDaoImpl;
 import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,9 @@ public class GameController {
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
         WordServiceInterface wordService = new WordService();
+        TryDao tryDao = new TryDaoImpl(database);
 
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
         int id = gameFacade.startGame();
 
@@ -38,7 +40,8 @@ public class GameController {
         Database database = new DataBasePostgress();
         WordServiceInterface wordService = new WordService();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
+        TryDao tryDao = new TryDaoImpl(database);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
         Map<String, String> feedback = gameFacade.nextMove(gameId, word);
         return feedback;
@@ -49,10 +52,11 @@ public class GameController {
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
         WordService wordService = new WordService();
+        TryDao tryDao = new TryDaoImpl(database);
 
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
-        int score = gameFacade.gameFinished(id, userName);
+        int score = gameFacade.endGame(id, userName);
         return null;
     }
 }

@@ -15,16 +15,6 @@ public class Round {
         this.word = word;
         this.tries = tries;
     }
-    public Round(){
-
-        this.word = word;
-    }
-    public boolean isActive(){
-        if(tries.size() == 5){
-            return false;
-        }
-        return true;
-    }
 
     public int getId(){
         return id;
@@ -35,16 +25,30 @@ public class Round {
     }
 
     public Map<String, String> IsCorrect(Try currentTry) {
+        Map<String, String> feedback = new HashMap<>();
+        tries.add(currentTry);
+        if(tries.size() > 5){
+            feedback.put("invalid", "true");
+            feedback.put("message", "Game over, call endGame method to save name.");
+            return feedback;
+        }
+        currentTry.save(this.id);
+        feedback = isTryValid(currentTry);
         // check spelling constraints
-        Map<String, String> feedback = isTryValid(currentTry);
-        if(feedback.size() > 1){
+        if(feedback.size() > 0){
+            feedback.put("invalid", "true");
             return feedback;
         }
 
         // get feedback for letters
         feedback = currentTry.getFeedback(this.word);
-        feedback.put("Letters in word", Integer.toString(word.length()));
+        feedback.put("invalid", "false");
+        String lettersInWord = Integer.toString(word.length());
+        feedback.put("Letters in word", lettersInWord);
         feedback.put("Tries left", Integer.toString(5 - tries.size()));
+        if(tries.size() == 5 && !feedback.get("lettersCorrect").equals(lettersInWord)){
+            feedback.put("message", "Game over, call endGame method to save name.");
+        }
         return feedback;
     }
 
@@ -57,20 +61,24 @@ public class Round {
             return feedback;
         }
 
-        //Het woord bestaat
-        //Het woord is juist gespeld
-        if(!currentTry.WordExists()){
-            feedback.put("feedback", "Dit woord bestaat niet");
-            return feedback;
-        }
-
         //Het woord schrijf je niet met een hoofdletter, zoals plaats- en eigennamen
         //Het woord bevat geen leestekens, zoals apostrofs, koppelstreepjes en punten
         if(!currentTry.IsCorrectlySpelled()){
             feedback.put("feedback","er mogen geen leestekens, zoals apostrofs, koppelstreepjes en punten in het woord staan.  " +
                     "het woord mag ook niet beginnen met een hoofdletter, zoals plaats- en eigennamen");
+            return feedback;
         }
+
+        //Het woord bestaat
+        //Het woord is juist gespeld
+        if(!currentTry.WordExists()){
+            feedback.put("feedback", "Dit woord bestaat niet");
+        }
+
         return feedback;
     }
 
+    public boolean isActive() {
+        return tries.size() < 5;
+    }
 }

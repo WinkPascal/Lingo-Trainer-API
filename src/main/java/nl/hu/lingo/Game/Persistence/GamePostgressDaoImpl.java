@@ -19,7 +19,7 @@ public class GamePostgressDaoImpl implements GameDao {
     }
 
     @Override
-    public Game getGameById(int id) {
+    public Game getGameById(int id, WordServiceInterface wordService) {
         Game game = null;
         String query = "select * from game where id = "+id;
         try {
@@ -29,7 +29,7 @@ public class GamePostgressDaoImpl implements GameDao {
                 String username = rs.getString("username");
                 List<Round> rounds = getRoundsByGameId(id);
 
-                game = new GameLingo(id, username, rounds, this, null);
+                game = new GameLingo(id, username, rounds, this, wordService);
             }
         } catch (SQLException e ) {
             throw new Error(e);
@@ -57,6 +57,7 @@ public class GamePostgressDaoImpl implements GameDao {
     }
     private List<Try> getTriesByRoundId(int id){
         List<Try> tries = new ArrayList<>();
+        TryDao tryDao = new TryDaoImpl(new DataBasePostgress());
         WordServiceInterface wordService = new WordService();
         String query = "select * from try where roundId = "+id;
         try {
@@ -65,7 +66,7 @@ public class GamePostgressDaoImpl implements GameDao {
             while (rs.next()) {
                 String word = rs.getString("word");
                 int tryId = rs.getInt("id");
-                Try try_ = new Try(tryId , word, wordService);
+                Try try_ = new Try(tryId, word, wordService, tryDao);
                 tries.add(try_);
             }
         } catch (SQLException e ) {
@@ -116,4 +117,42 @@ public class GamePostgressDaoImpl implements GameDao {
              throw new Error(e);
          }
      }
+    public void saveName(int id, String name){
+        try{
+            Statement  stmt = conn.createStatement();
+            String sql = "UPDATE game set username = '"+name+"' WHERE id = "+ id;
+            stmt.executeUpdate(sql);
+
+        } catch (SQLException e ) {
+            throw new Error(e);
+        }
+    }
+    public int getScore(int id){
+        String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.id = "+id;
+        int score = 0;
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                score = rs.getInt("score");
+            }
+        } catch (SQLException e ) {
+            throw new Error(e);
+        }
+        return score;
+    }
+    public int getHighscore(String username) {
+        String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.username = "+username;
+        int score = 0;
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                score = rs.getInt("score");
+            }
+        } catch (SQLException e ) {
+            throw new Error(e);
+        }
+        return score;
+    }
 }

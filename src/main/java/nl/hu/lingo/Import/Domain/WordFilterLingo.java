@@ -57,7 +57,6 @@ public class WordFilterLingo implements WordFilter {
     }
 
     public List<String> GetAllWordsWithLength(int lenght){
-        List<String> words = readWordsDao.readWordsFilterByWordLength(lenght);
-        return words;
+        return readWordsDao.readWordsFilterByWordLength(lenght);
     }
 }

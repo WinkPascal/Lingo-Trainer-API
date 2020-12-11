@@ -1,35 +1,40 @@
 package nl.hu.lingo.Game.Domain;
 
-import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
-
-import java.util.List;
 import java.util.Map;
 
 public class GameFacadeLingo {
-    private GameDao gameRepository;
+    private GameDao gameDao;
     private WordServiceInterface wordService;
+    private TryDao tryDao;
 
-    public GameFacadeLingo(GameDao gameRepository, WordServiceInterface wordService){
-        this.gameRepository = gameRepository;
+    public GameFacadeLingo(GameDao gameDao, WordServiceInterface wordService, TryDao tryDao){
+        this.gameDao = gameDao;
         this.wordService = wordService;
+        this.tryDao = tryDao;
     }
 
     public int startGame() {
-        Game game = new GameLingo(0, null, null, gameRepository, wordService);
+        Game game = new GameLingo(0, null, null, gameDao, wordService);
         int id = game.startGame();
         return id;
     }
 
     public Map<String, String> nextMove(int gameId, String word) {
-        Game game = gameRepository.getGameById(gameId);
-        Try currentTry = new Try(0, word, wordService);
+        Game game = gameDao.getGameById(gameId, wordService);
+        Try currentTry = new Try(0, word, wordService, tryDao);
 
         return game.nextMove(currentTry);
     }
 
-    public int gameFinished(int id, String name) {
+    public int endGame(int id, String name) {
+        Game game = gameDao.getGameById(id, wordService);
+        game.endGame(name);
         return 0;
+    }
+
+    public int getHighscore(String username){
+        return Game.getHighscore(username, gameDao);
     }
 }
 
