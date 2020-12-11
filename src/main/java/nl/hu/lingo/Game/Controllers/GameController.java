@@ -4,10 +4,13 @@ import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Game.Persistence.DataBasePostgress;
 import nl.hu.lingo.Game.Persistence.Database;
 import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
+import nl.hu.lingo.Import.Application.WordService;
+import nl.hu.lingo.Import.Application.WordServiceInterface;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class GameController {
@@ -21,7 +24,9 @@ public class GameController {
     public int startGame(){
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
+        WordServiceInterface wordService = new WordService();
+
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
 
         int id = gameFacade.startGame();
 
@@ -29,20 +34,23 @@ public class GameController {
     }
 
     @GetMapping("/nextMove")
-    public String nextMove(int gameId, String word) {
+    public Map<String, String> nextMove(int gameId, String word) {
         Database database = new DataBasePostgress();
+        WordServiceInterface wordService = new WordService();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
 
-        List<String> feedback = gameFacade.nextMove(gameId, word);
-        return null;
+        Map<String, String> feedback = gameFacade.nextMove(gameId, word);
+        return feedback;
     }
 
     @GetMapping("/gameFinished")
     public String gameFinished(int id, String userName) {
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository);
+        WordService wordService = new WordService();
+
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService);
 
         int score = gameFacade.gameFinished(id, userName);
         return null;

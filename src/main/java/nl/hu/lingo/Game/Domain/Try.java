@@ -3,27 +3,31 @@ package nl.hu.lingo.Game.Domain;
 import nl.hu.lingo.Game.Persistence.DataBasePostgress;
 import nl.hu.lingo.Game.Persistence.Database;
 import nl.hu.lingo.Game.Persistence.TryDaoImpl;
+import nl.hu.lingo.Import.Application.WordServiceInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Try {
     private int id;
     private String word;
+    private WordServiceInterface wordService;
 
-    public Try(int id, String word){
+    public Try(int id, String word, WordServiceInterface wordService){
         this.id = id;
         this.word = word;
+        this.wordService = wordService;
     }
 
     public boolean WordExists(){
-        Database database = new DataBasePostgress();
-        TryDao tryDao = new TryDaoImpl(database);
-
-        List<String> words = tryDao.GetAllWords();
-        for (String word : words) {
-            if(word == this.word){
-                return true;
+        List<String> words = wordService.getAllWordsWithLength(word.length());
+        if(words != null){
+            for (String word : words) {
+                if(word == this.word){
+                    return true;
+                }
             }
         }
         return false;
@@ -47,20 +51,29 @@ public class Try {
                 && word.indexOf(";") == -1);
     }
 
-    public List<String> getFeedback(String correctWord) {
-        List<String> feedback = new ArrayList<>();
-
+    public Map<String, String> getFeedback(String correctWord) {
+        Map<String, String> feedback = new HashMap<>();
+        int lettersCorrect = 0;
+        int lettersInWord = 0;
+        int lettersWrong = 0;
         for (int i = 0;i < this.word.length(); i++){
             char currentLetter = this.word.charAt(i);
 
             if(correctWord.charAt(i) == currentLetter){
-                feedback.add(currentLetter + " correct");
+                feedback.put(String.valueOf(currentLetter), " correct");
+                lettersCorrect ++;
             } else if(letterInWord(correctWord, currentLetter)){
-                feedback.add(currentLetter + " In woord");
+                feedback.put(String.valueOf(currentLetter), " In woord");
+                lettersInWord++;
             } else{
-                feedback.add(currentLetter + " Is niet in woord");
+                feedback.put(String.valueOf(currentLetter), " Is niet in woord");
+                lettersWrong++;
             }
         }
+        feedback.put("lettersCorrect", Integer.toString(lettersCorrect));
+        feedback.put("lettersInWord", Integer.toString(lettersInWord));
+        feedback.put("lettersWrong", Integer.toString(lettersWrong));
+
         return feedback;
     }
 

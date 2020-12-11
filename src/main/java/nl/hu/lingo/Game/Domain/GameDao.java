@@ -12,5 +12,5 @@ public interface GameDao {
 
     void saveTry(int roundId, String word);
 
-    int saveRound(String word, int gameId);
+    void saveRound(String word, int gameId);
 }

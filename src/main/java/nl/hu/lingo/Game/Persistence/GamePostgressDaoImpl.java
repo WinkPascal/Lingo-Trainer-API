@@ -1,10 +1,15 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.*;
+import nl.hu.lingo.Import.Application.WordService;
+import nl.hu.lingo.Import.Application.WordServiceInterface;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Scanner;
 
 public class GamePostgressDaoImpl implements GameDao {
     private Connection conn = null;
@@ -24,7 +29,7 @@ public class GamePostgressDaoImpl implements GameDao {
                 String username = rs.getString("username");
                 List<Round> rounds = getRoundsByGameId(id);
 
-                game = new GameLingo(id, username, rounds);
+                game = new GameLingo(id, username, rounds, this, null);
             }
         } catch (SQLException e ) {
             throw new Error(e);
@@ -52,6 +57,7 @@ public class GamePostgressDaoImpl implements GameDao {
     }
     private List<Try> getTriesByRoundId(int id){
         List<Try> tries = new ArrayList<>();
+        WordServiceInterface wordService = new WordService();
         String query = "select * from try where roundId = "+id;
         try {
             Statement stmt = conn.createStatement();
@@ -59,8 +65,7 @@ public class GamePostgressDaoImpl implements GameDao {
             while (rs.next()) {
                 String word = rs.getString("word");
                 int tryId = rs.getInt("id");
-
-                Try try_ = new Try(tryId , word);
+                Try try_ = new Try(tryId , word, wordService);
                 tries.add(try_);
             }
         } catch (SQLException e ) {
@@ -73,7 +78,6 @@ public class GamePostgressDaoImpl implements GameDao {
         int id = 0;
         try{
             Statement  stmt = conn.createStatement();
-
             String sql = "INSERT INTO Game(username) VALUES (null)";
             stmt.executeUpdate(sql);
 
@@ -102,17 +106,14 @@ public class GamePostgressDaoImpl implements GameDao {
          }
      }
 
-     public int saveRound(String word, int gameId){
-        int id;
+     public void saveRound(String word, int gameId){
         try{
              Statement  stmt = conn.createStatement();
-
              String sql = "INSERT INTO round(word, gameid) VALUES ('"+word+"', "+gameId+")";
-             id = stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+             stmt.executeUpdate(sql);
 
          } catch (SQLException e ) {
              throw new Error(e);
          }
-        return id;
      }
 }

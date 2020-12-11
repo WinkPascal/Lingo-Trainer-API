@@ -6,4 +6,5 @@ public interface ReadWords {
     List<String> readWordsFilterByWordLength(int wordLength);
 
     List<String> getAllWords();
+
 }
