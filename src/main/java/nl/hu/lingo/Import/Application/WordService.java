@@ -26,9 +26,9 @@ public class WordService implements WordServiceInterface {
         if(length == 5 || length == 6 || length == 7) {
             WriteWords writeWords = new FileWriteWords();
             ReadWords readWords = new FileReadWords();
-
             WordFilter wordFilterLingo = new WordFilterLingo(writeWords, readWords, length);
-            return wordFilterLingo.GetAllWordsWithLength(length);
+
+            return wordFilterLingo.getAllWordsWithLength(length);
         }
         return null;
     }

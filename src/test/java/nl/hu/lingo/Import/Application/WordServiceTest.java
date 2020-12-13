@@ -1,29 +1,55 @@
 package nl.hu.lingo.Import.Application;
 
+import nl.hu.lingo.Game.Domain.GameDao;
+import nl.hu.lingo.Game.Domain.TryDao;
+import nl.hu.lingo.Game.Persistence.DataBasePostgress;
+import nl.hu.lingo.Game.Persistence.Database;
+import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
+import nl.hu.lingo.Game.Persistence.TryDaoImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class WordServiceTest {
 
-    @Test
-    void pickWordForGameAvailableLengthTest() {
-        int wordLengthFive = 5;
-        int wordLengthSix = 6;
-        int wordLengthSeven = 7;
-        WordServiceInterface wordService = new WordService();
-        String word = wordService.pickwordForGame(wordLengthFive);
+    private Database database;
+    private GameDao gameRepo;
+    private WordServiceInterface wordService;
+    private TryDao tryDao;
 
-        Assert.isTrue(word.length() == wordLengthFive);
+    @BeforeEach
+    void beforeEach() {
+        database = new DataBasePostgress();
+        gameRepo = new GamePostgressDaoImpl(database);
+        wordService = new WordService();
+        tryDao = new TryDaoImpl(database);
+    }
 
-        String word2 = wordService.pickwordForGame(wordLengthSix);
-        Assert.isTrue(word2.length() == wordLengthSix);
+    static Stream<Arguments> provideSupportedLengths() {
+        return Stream.of(
+                Arguments.of(5, true),
+                Arguments.of(6, true),
+                Arguments.of(7, true)
+        );
+    }
 
-        String word3 = wordService.pickwordForGame(wordLengthSeven);
-        Assert.isTrue(word3.length() == wordLengthSeven);
+    @ParameterizedTest
+    @MethodSource("provideSupportedLengths")
+    void getWordsWithLength(int length, boolean expectation) {
+        String word = wordService.pickwordForGame(length);
+
+        assertEquals(expectation, word.length() == length);
     }
 
     @Test
@@ -34,36 +60,61 @@ public class WordServiceTest {
         Assert.isTrue(word.equals(null));
     }
 
-    @Test
-    void pickWordForGameUnsupportedLengthTest() {
-        WordServiceInterface wordService = new WordService();
+    static Stream<Arguments> provideUnSupportedLengths() {
+        return Stream.of(
+                Arguments.of(0, true),
+                Arguments.of(1, true),
+                Arguments.of(3, true),
+                Arguments.of(8, true),
+                Arguments.of(10, true),
+                Arguments.of(89571, true)
+        );
+    }
 
-        String word = wordService.pickwordForGame(23);
-        Assert.isTrue(word.equals(null));
+    @ParameterizedTest
+    @MethodSource("provideUnSupportedLengths")
+    void pickWordForGameUnsupportedLengthTest(int length, boolean expectation) {
+        String word = wordService.pickwordForGame(length);
+        assertEquals(expectation, word == null);
+    }
 
-        word = wordService.pickwordForGame(1);
-        Assert.isTrue(word.equals(null));
+    //==============================================================================================================
+    //==============================================================================================================
+    //==============================================================================================================
+    //==============================================================================================================
 
-       word = wordService.pickwordForGame(231251);
-        Assert.isTrue(word.equals(null));
 
-         word = wordService.pickwordForGame(1);
-        Assert.isTrue(word.equals(null));
+    @ParameterizedTest
+    @MethodSource("provideSupportedLengths")
+    void GetAllWordsWithSupportedLengthTest(int length, boolean expectation) {
+        boolean correctLength = true;
+        List<String> words = wordService.getAllWordsWithLength(length);
 
-         word = wordService.pickwordForGame(635123);
-        Assert.isTrue(word.equals(null));
+        for (String word : words) {
+            if (word.length() != length) {
+                correctLength = false;
+            }
+        }
 
-         word = wordService.pickwordForGame(4216);
-        Assert.isTrue(word.equals(null));
+        assertEquals(expectation, correctLength);
     }
 
 
-    @Test
-    void GetAllWordsWithCorrectLengthTest() {
-        WordServiceInterface wordService = new WordService();
-        List<String> words = wordService.getAllWordsWithLength(5);
-        Assert.isTrue(words.size() > 10);
+    static Stream<Arguments> provideUnSupportedLengths_GetAllWordsWithUnSupportedLengthTest() {
+        return Stream.of(
+                Arguments.of(0, null),
+                Arguments.of(1, null),
+                Arguments.of(3, null),
+                Arguments.of(8, null),
+                Arguments.of(10, null),
+                Arguments.of(89571, null)
+        );
     }
+    @ParameterizedTest
+    @MethodSource("provideUnSupportedLengths_GetAllWordsWithUnSupportedLengthTest")
+    void GetAllWordsWithUnSupportedLengthTest(int length, List<String> expectation) {
+        List<String> words = wordService.getAllWordsWithLength(length);
 
-
+        assertTrue(expectation == words);
+    }
 }

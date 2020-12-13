@@ -29,8 +29,7 @@ public class GameFacadeLingo {
 
     public int endGame(int id, String name) {
         Game game = gameDao.getGameById(id, wordService);
-        game.endGame(name);
-        return 0;
+        return game.endGame(name);
     }
 
     public int getHighscore(String username){

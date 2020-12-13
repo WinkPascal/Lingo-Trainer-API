@@ -1,11 +1,7 @@
 package nl.hu.lingo.Game.Domain;
 
-import nl.hu.lingo.Game.Persistence.DataBasePostgress;
-import nl.hu.lingo.Game.Persistence.Database;
-import nl.hu.lingo.Game.Persistence.TryDaoImpl;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

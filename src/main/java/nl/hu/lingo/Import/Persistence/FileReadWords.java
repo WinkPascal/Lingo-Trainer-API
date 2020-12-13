@@ -20,22 +20,7 @@ public class FileReadWords implements ReadWords {
         List<String> words = new ArrayList<>();
 
         try {
-            File myObj;
-            switch (wordLength){
-                case 5:
-                    myObj = new File("src\\main\\resources\\filteredWords\\fiveLetterWords.txt");
-                    break;
-                case 6:
-                    myObj = new File("src\\main\\resources\\filteredWords\\sixLetterWords.txt");
-                    break;
-                case 7:
-                    myObj = new File("src\\main\\resources\\filteredWords\\sevenLetterWords.txt");
-                    break;
-                default:
-                    return null;
-            }
-
-            Scanner myReader = new Scanner(myObj);
+            Scanner myReader = new Scanner(getRightFileDir(wordLength));
             while (myReader.hasNextLine()) {
                 String word = myReader.nextLine();
                 words.add(word);
@@ -47,9 +32,33 @@ public class FileReadWords implements ReadWords {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String splitKeyWord = ", ";
-        words = Arrays.asList(words.get(0).split(splitKeyWord));
+        if(!words.isEmpty()){
+            String splitKeyWord = ", ";
+            words = Arrays.asList(words.get(0).split(splitKeyWord));
+
+            words.set(0, words.get(0).substring(1));
+            words.set(words.size()-1, words.get(words.size()-1).substring(0, words.get(words.size()-1).length() - 1));
+        }
+
         return words;
+    }
+
+    private File getRightFileDir(int lenght){
+        File myObj;
+        switch (lenght){
+            case 5:
+                myObj = new File("src\\main\\resources\\filteredWords\\fiveLetterWords.txt");
+                break;
+            case 6:
+                myObj = new File("src\\main\\resources\\filteredWords\\sixLetterWords.txt");
+                break;
+            case 7:
+                myObj = new File("src\\main\\resources\\filteredWords\\sevenLetterWords.txt");
+                break;
+            default:
+                return null;
+        }
+        return myObj;
     }
 
     public List<String> getAllWords(){

@@ -142,7 +142,11 @@ public class GamePostgressDaoImpl implements GameDao {
         return score;
     }
     public int getHighscore(String username) {
-        String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.username = "+username;
+        String query = "select count(r.id) as score from game g join round r on g.id = r.gameid " +
+                "where g.username = '"+username+"'  " +
+                "GROUP BY g.Id " +
+                "ORDER BY count(r.id) DESC " +
+                "LIMIT 1";
         int score = 0;
         try {
             Statement stmt = conn.createStatement();

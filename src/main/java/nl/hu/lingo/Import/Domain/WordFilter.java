@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface WordFilter {
     String pickwordForGame();
-    List<String> GetAllWordsWithLength(int lenght);
+    List<String> getAllWordsWithLength(int lenght);
     }

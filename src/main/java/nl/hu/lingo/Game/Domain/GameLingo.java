@@ -48,6 +48,7 @@ public class GameLingo implements Game {
             feedback.put("status", "Game over, call endGame method to save name.");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
+
             if(feedback.get("invalid").equals("true")){
                 return feedback;
             } else{
@@ -68,8 +69,7 @@ public class GameLingo implements Game {
 
     @Override
     public int endGame(String name) {
-        Round lastRound = getLastRound();
-        if(!lastRound.isActive()){
+        if(getLastRound().isActive() || this.userName != null){
             return 0;
         } else{
             gameDao.saveName(this.id, name);
