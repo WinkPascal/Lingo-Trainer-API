@@ -49,16 +49,16 @@ public class WordServiceTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("getWordsWithLength_provideLengths")
-    void getWordsWithLength(int length, boolean lengthIsCorrect) {
-        String word = wordService.pickwordForGame(length);
-        if(word == null){
-            assertTrue(!lengthIsCorrect);
-        } else{
-            assertEquals(lengthIsCorrect, word.length() == length);
-        }
-    }
+//    @ParameterizedTest
+//    @MethodSource("getWordsWithLength_provideLengths")
+//    void getWordsWithLength(int length, boolean lengthIsCorrect) {
+//        String word = wordService.pickwordForGame(length);
+//        if(word == null){
+//            assertTrue(!lengthIsCorrect);
+//        } else{
+//            assertEquals(lengthIsCorrect, word.length() == length);
+//        }
+//    }
 
 
 
