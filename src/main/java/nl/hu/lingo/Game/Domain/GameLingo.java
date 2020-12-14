@@ -45,7 +45,7 @@ public class GameLingo implements Game {
 
         Map<String, String> feedback = new HashMap<>();
         if(currentRound == null){
-            feedback.put("status", "Game over, call endGame method to save name.");
+            feedback.put("message", "Game over, call endGame method to save name.");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
 
@@ -61,6 +61,9 @@ public class GameLingo implements Game {
                     String word = newRound(nextWordLength);
                     feedback.replace("Letters in word", Integer.toString(word.length()));
                     feedback.replace("Tries left", "5");
+                    feedback.put("message", "Attempt was correct, new round has started");
+                } else{
+                    feedback.put("message", "This was not the right word.");
                 }
             }
         }
@@ -79,7 +82,7 @@ public class GameLingo implements Game {
 
     @Override
     public int startGame() {
-        this.id = gameDao.saveGame();
+        this.id = gameDao.newGame();
         if(newRound(5) == null){
             return 0;
         }

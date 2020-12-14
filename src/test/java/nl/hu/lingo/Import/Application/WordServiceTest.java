@@ -23,42 +23,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class WordServiceTest {
 
-    private Database database;
-    private GameDao gameRepo;
     private WordServiceInterface wordService;
-    private TryDao tryDao;
 
     @BeforeEach
     void beforeEach() {
-        database = new DataBasePostgress();
-        gameRepo = new GamePostgressDaoImpl(database);
         wordService = new WordService();
-        tryDao = new TryDaoImpl(database);
     }
 
-    static Stream<Arguments> provideSupportedLengths() {
+    static Stream<Arguments> getWordsWithLength_provideLengths() {
         return Stream.of(
+                Arguments.of(-1, false),
+                Arguments.of(-5, false),
+                Arguments.of(-6, false),
+                Arguments.of(-7, false),
+                Arguments.of(-8, false),
+                Arguments.of(0, false),
+                Arguments.of(4, false),
+
                 Arguments.of(5, true),
                 Arguments.of(6, true),
-                Arguments.of(7, true)
+                Arguments.of(7, true),
+
+                Arguments.of(8, false),
+                Arguments.of(10, false)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("provideSupportedLengths")
-    void getWordsWithLength(int length, boolean expectation) {
+    @MethodSource("getWordsWithLength_provideLengths")
+    void getWordsWithLength(int length, boolean lengthIsCorrect) {
         String word = wordService.pickwordForGame(length);
-
-        assertEquals(expectation, word.length() == length);
+        if(word == null){
+            assertTrue(!lengthIsCorrect);
+        } else{
+            assertEquals(lengthIsCorrect, word.length() == length);
+        }
     }
 
-    @Test
-    void pickWordForGameZeroLengthTest() {
-        WordServiceInterface wordService = new WordService();
-        String word = wordService.pickwordForGame(0);
 
-        Assert.isTrue(word.equals(null));
-    }
 
     static Stream<Arguments> provideUnSupportedLengths() {
         return Stream.of(
@@ -82,7 +84,13 @@ public class WordServiceTest {
     //==============================================================================================================
     //==============================================================================================================
     //==============================================================================================================
-
+    static Stream<Arguments> provideSupportedLengths() {
+        return Stream.of(
+                Arguments.of(5, true),
+                Arguments.of(6, true),
+                Arguments.of(7, true)
+        );
+    }
 
     @ParameterizedTest
     @MethodSource("provideSupportedLengths")

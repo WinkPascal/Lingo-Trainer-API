@@ -1,62 +1,56 @@
 package nl.hu.lingo.Import.Domain;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WordFilterLingo implements WordFilter {
-    private WriteWords writeWordsDao;
-    private ReadWords readWordsDao;
+    private WriteWordsDao writeWordsDao;
+    private ReadWordsDao readWordsDao;
     private int lenght;
 
-    public WordFilterLingo(WriteWords writeWordsDao, ReadWords readWordsDao, int lenght){
+    public WordFilterLingo(WriteWordsDao writeWordsDao, ReadWordsDao readWordsDao, int lenght){
         this.writeWordsDao = writeWordsDao;
         this.readWordsDao = readWordsDao;
         this.lenght = lenght;
     }
 
     public String pickwordForGame(){
-        List<String> words = readWordsDao.readWordsFilterByWordLength(lenght);
-        if(words == null){
-            words = filterWordsForGame(readWordsDao.getAllWords());
-            try{
-                writeWordsDao.writeWords(words, lenght);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (lenght == 5 || lenght == 6 || lenght == 7) {
+            List<String> words = readWordsDao.readWordsFilterByWordLength(lenght);
+            if(words == null){
+                List<String> allWords = filterWordsForGame(readWordsDao.getAllWords());
+                try{
+                    writeWordsDao.writeWords(allWords, lenght);
+                    words = readWordsDao.readWordsFilterByWordLength(lenght);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        int randomNum = ThreadLocalRandom.current().nextInt(0, words.size() + 1);
 
-        return words.get(randomNum);
+            int randomNum = ThreadLocalRandom.current().nextInt(0, words.size() );
+
+            return words.get(randomNum);
+        }
+        return null;
     }
     private List<String> filterWordsForGame(List<String> allWords) {
         List<String> filteredWords = new ArrayList<>();
-        for (int i=0; i<allWords.size(); i++) {
+        for (int i = 0; i < allWords.size(); i++) {
             String word = allWords.get(i);
 
-            if (word.length() == lenght
-                    && !word.substring(0, 1).equals(word.substring(0, 1).toUpperCase())
-                    && word.indexOf(".") == -1
-                    && word.indexOf(",") == -1
-                    && word.indexOf("-") == -1
-                    && word.indexOf("=") == -1
-                    && word.indexOf("'") == -1
-                    && word.indexOf("?") == -1
-                    && word.indexOf("!") == -1
-                    && word.indexOf(":") == -1
-                    && word.indexOf("\"") == -1
-                    && word.indexOf(";") == -1) {
+            if (word.length() == lenght &&
+                    word.matches("\\p{javaLowerCase}*")) {
                 filteredWords.add(word);
             }
         }
         return filteredWords;
     }
-
-    public List<String> getAllWordsWithLength(int lenght){
-        return readWordsDao.readWordsFilterByWordLength(lenght);
+    public List<String> getAllWordsWithLength(){
+        if(lenght == 5 || lenght == 6 || lenght == 7) {
+            return readWordsDao.readWordsFilterByWordLength(lenght);
+        }
+        return null;
     }
 }

@@ -45,7 +45,7 @@ Testen
 Beoordeling
 Build tools en pipeline
 Kunnen we het geautomatiseerd bouwen?
-
+    
 
 Mate van functionaliteit
 Doet het genoeg?

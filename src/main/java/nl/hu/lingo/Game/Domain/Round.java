@@ -36,6 +36,7 @@ public class Round {
         feedback = isTryValid(currentTry);
         // check spelling constraints
         if(feedback.size() > 0){
+            feedback.put("message", "Spelling was not correct.");
             feedback.put("invalid", "true");
             return feedback;
         }

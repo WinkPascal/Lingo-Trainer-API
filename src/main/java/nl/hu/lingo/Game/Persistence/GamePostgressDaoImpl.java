@@ -77,7 +77,7 @@ public class GamePostgressDaoImpl implements GameDao {
         return tries;
     }
 
-    public int saveGame(){
+    public int newGame(){
         int id = 0;
         try{
             Statement  stmt = conn.createStatement();

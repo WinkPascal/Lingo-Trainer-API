@@ -5,6 +5,8 @@ import nl.hu.lingo.Import.Application.WordServiceInterface;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Try {
     private int id;
@@ -40,17 +42,7 @@ public class Try {
     }
 
     public boolean IsCorrectlySpelled() {
-        return (!word.substring(0, 1).equals(word.substring(0, 1).toUpperCase())
-                && word.indexOf(".") == -1
-                && word.indexOf(",") == -1
-                && word.indexOf("-") == -1
-                && word.indexOf("=") == -1
-                && word.indexOf("'") == -1
-                && word.indexOf("?") == -1
-                && word.indexOf("!") == -1
-                && word.indexOf(":") == -1
-                && word.indexOf("\"") == -1
-                && word.indexOf(";") == -1);
+        return word.matches("\\p{javaLowerCase}*");
     }
 
     public Map<String, String> getFeedback(String correctWord) {

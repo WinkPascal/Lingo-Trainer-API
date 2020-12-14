@@ -10,7 +10,7 @@ import java.util.List;
 public interface GameDao {
     Game getGameById(int id, WordServiceInterface wordService);
 
-    int saveGame();
+    int newGame();
 
     void saveTry(int roundId, String word);
 
