@@ -36,6 +36,7 @@ public class GamePostgressDaoImpl implements GameDao {
         }
         return game;
     }
+    
     private List<Round> getRoundsByGameId(int id){
         List<Round> rounds = new ArrayList<>();
         String query = "select * from round where gameId = "+id;
@@ -55,6 +56,7 @@ public class GamePostgressDaoImpl implements GameDao {
         }
         return rounds;
     }
+
     private List<Try> getTriesByRoundId(int id){
         List<Try> tries = new ArrayList<>();
         TryDao tryDao = new TryDaoImpl(new DataBasePostgress());
@@ -117,6 +119,7 @@ public class GamePostgressDaoImpl implements GameDao {
              throw new Error(e);
          }
      }
+
     public void saveName(int id, String name){
         try{
             Statement  stmt = conn.createStatement();
@@ -127,6 +130,7 @@ public class GamePostgressDaoImpl implements GameDao {
             throw new Error(e);
         }
     }
+
     public int getScore(int id){
         String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.id = "+id;
         int score = 0;
@@ -141,6 +145,7 @@ public class GamePostgressDaoImpl implements GameDao {
         }
         return score;
     }
+
     public int getHighscore(String username) {
         String query = "select count(r.id) as score from game g join round r on g.id = r.gameid " +
                 "where g.username = '"+username+"'  " +
