@@ -24,7 +24,6 @@ public class WordService implements WordServiceInterface {
 
     public List<String> getAllWordsWithLength(int length){
         if(length == 5 || length == 6 || length == 7) {
-
             WriteWordsDao writeWords = new FileWriteWordsDao();
             ReadWordsDao readWords = new FileReadWordsDao();
             WordFilter wordFilterLingo = new WordFilterLingo(writeWords, readWords, length);
