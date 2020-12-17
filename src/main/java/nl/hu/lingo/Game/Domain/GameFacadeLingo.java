@@ -1,5 +1,6 @@
 package nl.hu.lingo.Game.Domain;
 
+import nl.hu.lingo.Game.Persistence.*;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 import java.util.Map;
 
@@ -15,7 +16,8 @@ public class GameFacadeLingo {
     }
 
     public int startGame() {
-        Game game = new GameLingo(0, null, null, gameDao, wordService);
+        RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
+        Game game = new GameLingo(0, null, null, gameDao, wordService,roundDao);
         int id = game.startGame();
         return id;
     }

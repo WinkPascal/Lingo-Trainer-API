@@ -1,6 +1,7 @@
 package nl.hu.lingo.Game.Domain;
 
-import java.util.List;
+import nl.hu.lingo.Game.Persistence.GameDao;
+
 import java.util.Map;
 
 public interface Game {
@@ -8,8 +9,6 @@ public interface Game {
     static int getHighscore(String username, GameDao gameDao) {
         return gameDao.getHighscore(username);
     }
-
-    List<Round> getRounds();
 
     Map<String, String> nextMove(Try currentTry);
 

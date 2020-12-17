@@ -1,5 +1,6 @@
-package nl.hu.lingo.Game.Domain;
+package nl.hu.lingo.Game.Persistence;
 
+import nl.hu.lingo.Game.Domain.Game;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
 import java.sql.ResultSet;
@@ -14,7 +15,6 @@ public interface GameDao {
 
     void saveTry(int roundId, String word);
 
-    void saveRound(String word, int gameId);
 
     void saveName(int id, String name);
 

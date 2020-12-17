@@ -1,12 +1,8 @@
 package nl.hu.lingo.Game.Persistence;
 
-import nl.hu.lingo.Game.Domain.TryDao;
-
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 
 public class TryDaoImpl implements TryDao {
     private Connection conn;

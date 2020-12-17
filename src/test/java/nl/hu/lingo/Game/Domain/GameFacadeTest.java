@@ -1,7 +1,6 @@
 package nl.hu.lingo.Game.Domain;
 
-import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
-import nl.hu.lingo.Game.Persistence.TryDaoImpl;
+import nl.hu.lingo.Game.Persistence.*;
 import nl.hu.lingo.Import.Application.WordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,9 +29,11 @@ class GameFacadeTest {
     private TryDao tryDaoMock;
     private GameFacadeLingo gameFacade;
     private Game game;
+    private RoundDao roundDaoMock;
 
     @BeforeEach
     void beforeEach(){
+        roundDaoMock = mock(RoundPostgressDao.class);
         wordServiceMock = mock(WordService.class);
         List<String> words = new ArrayList<>();
         words.add("fiets");
@@ -50,8 +51,8 @@ class GameFacadeTest {
 
         gameDaoMock = mock(GamePostgressDaoImpl.class);
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, wordToGuess, new ArrayList<>()));
-        game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock);
+        rounds.add(new Round(1, wordToGuess, new ArrayList<>(), roundDaoMock));
+        game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
         when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
                 .thenReturn(game);
 
@@ -87,8 +88,8 @@ class GameFacadeTest {
         tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
 
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, "fiets", tries));
-        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock);
+        rounds.add(new Round(1, "fiets", tries, roundDaoMock));
+        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
         when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
                 .thenReturn(game);
@@ -105,8 +106,8 @@ class GameFacadeTest {
     void endGame_game_not_over() {
         List<Try> tries = new ArrayList<>();
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, "fiets", tries));
-        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock);
+        rounds.add(new Round(1, "fiets", tries, roundDaoMock));
+        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
         when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
                 .thenReturn(game);

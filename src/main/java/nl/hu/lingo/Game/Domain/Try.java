@@ -1,12 +1,11 @@
 package nl.hu.lingo.Game.Domain;
 
+import nl.hu.lingo.Game.Persistence.TryDao;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Try {
     private int id;
@@ -21,47 +20,29 @@ public class Try {
         this.tryDao = tryDao;
     }
 
-    public boolean WordExists(){
-        List<String> words = wordService.getAllWordsWithLength(word.length());
-        if(words != null){
-            for (String word : words) {
-                if(word.equals(this.word)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean wordIsLength(int length) {
-        return this.word.length() == length;
-    }
-
-    public void save(int RoundId){
-        tryDao.save(RoundId, word);
-    }
-
-    public boolean IsCorrectlySpelled() {
-        return word.matches("\\p{javaLowerCase}*");
-    }
-
     public Map<String, String> getFeedback(String correctWord) {
         Map<String, String> feedback = new HashMap<>();
+        boolean correctLength = true;
+        if(this.word.length() != correctWord.length()) correctLength = false;
+
+
         int lettersCorrect = 0;
         int lettersInWord = 0;
         int lettersWrong = 0;
         for (int i = 0;i < this.word.length(); i++){
             char currentLetter = this.word.charAt(i);
-            String key = Integer.toString(i)+":"+String.valueOf(currentLetter);
-
-            if(correctWord.charAt(i) == currentLetter){
-                feedback.put(key, " correct");
+            String key = Integer.toString(i);
+            if(!correctLength){
+                feedback.put(key, "absent");
+                lettersWrong++;
+            } else if(correctWord.charAt(i) == currentLetter){
+                feedback.put(key, "correct");
                 lettersCorrect ++;
             } else if(letterInWord(correctWord, currentLetter)){
-                feedback.put(key, " In woord");
+                feedback.put(key, "present");
                 lettersInWord++;
             } else{
-                feedback.put(key, " Is niet in woord");
+                feedback.put(key, "absent");
                 lettersWrong++;
             }
         }
@@ -79,5 +60,27 @@ public class Try {
             }
         }
         return false;
+    }
+
+    public Map<String, String> CheckSpellingContraints() {
+        Map<String, String> feedback = new HashMap<>();
+        if(!word.matches("\\p{javaLowerCase}*")){
+            feedback.put("feedback","Er mogen geen leestekens, zoals apostrofs, koppelstreepjes en punten in het woord staan. het woord mag ook niet beginnen met een hoofdletter, zoals plaats- en eigennamen");
+            return feedback;
+        }
+        boolean wordExists = false;
+        List<String> words = wordService.getAllWordsWithLength(word.length());
+        if(words != null){
+            for (String word : words) {
+                if(word.equals(this.word)){
+                     wordExists = true;
+                }
+            }
+        }
+        if(!wordExists) feedback.put("feedback", "Dit woord bestaat niet");
+        return feedback;
+    }
+    public void save(int RoundId){
+        tryDao.save(RoundId, word);
     }
 }

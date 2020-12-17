@@ -1,16 +1,12 @@
 package nl.hu.lingo.Game.Controllers;
 
 import nl.hu.lingo.Game.Domain.*;
-import nl.hu.lingo.Game.Persistence.DataBasePostgress;
-import nl.hu.lingo.Game.Persistence.Database;
-import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
-import nl.hu.lingo.Game.Persistence.TryDaoImpl;
+import nl.hu.lingo.Game.Persistence.*;
 import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
