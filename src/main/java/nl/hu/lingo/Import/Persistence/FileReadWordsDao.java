@@ -11,14 +11,16 @@ import java.util.Scanner;
 
 public class FileReadWordsDao implements ReadWordsDao {
 
-    private Object FileNotFoundException;
-
     @Override
     public List<String> readWordsFilterByWordLength(int wordLength){
         List<String> words = new ArrayList<>();
 
         try {
-            Scanner myReader = new Scanner(getRightFileDir(wordLength));
+            File file = getRightFileDir(wordLength);
+            if(file == null) return null;
+
+            Scanner myReader = new Scanner(file);
+
             while (myReader.hasNextLine()) {
                 String word = myReader.nextLine();
                 words.add(word);

@@ -28,8 +28,8 @@ public class WordFilterLingo implements WordFilter {
                     e.printStackTrace();
                 }
             }
-
-            int randomNum = ThreadLocalRandom.current().nextInt(0, words.size() );
+        int s = words.size();
+            int randomNum = ThreadLocalRandom.current().nextInt(0, words.size());
 
             return words.get(randomNum);
         }

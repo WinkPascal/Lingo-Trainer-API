@@ -1,18 +1,10 @@
 package nl.hu.lingo.Import.Application;
 
-import nl.hu.lingo.Game.Domain.GameDao;
-import nl.hu.lingo.Game.Domain.TryDao;
-import nl.hu.lingo.Game.Persistence.DataBasePostgress;
-import nl.hu.lingo.Game.Persistence.Database;
-import nl.hu.lingo.Game.Persistence.GamePostgressDaoImpl;
-import nl.hu.lingo.Game.Persistence.TryDaoImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,43 +22,31 @@ public class WordServiceTest {
         wordService = new WordService();
     }
 
-    static Stream<Arguments> getWordsWithLength_provideLengths() {
+    static Stream<Arguments> pickWordForGameSupportedLengthTest_words() {
         return Stream.of(
-                Arguments.of(-1, false),
-                Arguments.of(-5, false),
-                Arguments.of(-6, false),
-                Arguments.of(-7, false),
-                Arguments.of(-8, false),
-                Arguments.of(0, false),
-                Arguments.of(4, false),
-
                 Arguments.of(5, true),
                 Arguments.of(6, true),
-                Arguments.of(7, true),
-
-                Arguments.of(8, false),
-                Arguments.of(10, false)
+                Arguments.of(7, true)
         );
     }
 
-//    @ParameterizedTest
-//    @MethodSource("getWordsWithLength_provideLengths")
-//    void getWordsWithLength(int length, boolean lengthIsCorrect) {
-//        String word = wordService.pickwordForGame(length);
-//        if(word == null){
-//            assertTrue(!lengthIsCorrect);
-//        } else{
-//            assertEquals(lengthIsCorrect, word.length() == length);
-//        }
-//    }
+    @ParameterizedTest
+    @MethodSource("pickWordForGameSupportedLengthTest_words")
+    void pickWordForGameSupportedLengthTest(int length, boolean lengthIsCorrect) {
+        String word = wordService.pickwordForGame(length);
+        boolean correctLength = false;
+        if(word.length() == length){
+            correctLength = true;
+        }
+        assertEquals(correctLength, lengthIsCorrect);
 
-
+    }
 
     static Stream<Arguments> provideUnSupportedLengths() {
         return Stream.of(
                 Arguments.of(0, true),
                 Arguments.of(1, true),
-                Arguments.of(3, true),
+                Arguments.of(4, true),
                 Arguments.of(8, true),
                 Arguments.of(10, true),
                 Arguments.of(89571, true)
@@ -97,13 +77,15 @@ public class WordServiceTest {
     void GetAllWordsWithSupportedLengthTest(int length, boolean expectation) {
         boolean correctLength = true;
         List<String> words = wordService.getAllWordsWithLength(length);
-
-        for (String word : words) {
-            if (word.length() != length) {
-                correctLength = false;
+        if(words == null) {
+            correctLength = false;
+        } else{
+            for (String word : words) {
+                if (word.length() != length) {
+                    correctLength = false;
+                }
             }
         }
-
         assertEquals(expectation, correctLength);
     }
 

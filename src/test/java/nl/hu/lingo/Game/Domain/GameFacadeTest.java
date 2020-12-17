@@ -73,7 +73,7 @@ class GameFacadeTest {
         // ik test nu ook deze functie, terwijl dat misschien niet helemnal de bedoeling is
         // ,maar ik wil aantonen dat er echt een game met een ronde wordt gestart met het goede woord
         // Hierdoor probeer ik ook met de test tegelijk de systeem documentatie te schrijven.
-        Map<String, String> resp = gameFacade.nextMove(15, "fiets");
+        Map<String, String> resp = gameFacade.nextMove(id, "fiets");
         assertTrue(resp.get("message").equals("Attempt was correct, new round has started")); // Assert
     }
 
