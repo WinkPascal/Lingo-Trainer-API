@@ -65,7 +65,7 @@ public class FileReadWordsDao implements ReadWordsDao {
         List<String> words = new ArrayList<>();
 
         try {
-            File myObj = new File("src\\main\\resources\\opentaal-wordlist\\wordlist.txt");
+            File myObj = new File("src\\main\\resources\\filteredWords\\wordlist.txt");
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String word = myReader.nextLine();
