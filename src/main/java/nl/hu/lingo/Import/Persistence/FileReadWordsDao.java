@@ -75,8 +75,6 @@ public class FileReadWordsDao implements ReadWordsDao {
         }
         catch (java.io.FileNotFoundException e) {
                 e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         return words;
