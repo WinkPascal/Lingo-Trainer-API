@@ -56,7 +56,7 @@ class GameFacadeTest {
         when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
                 .thenReturn(game);
 
-        tryDaoMock = mock(TryDaoImpl.class);
+        tryDaoMock = mock(TryPostgressDao.class);
 
         gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock);
     }
@@ -158,11 +158,11 @@ class GameFacadeTest {
     }
     @ParameterizedTest
     @MethodSource("nextMove_check_word_spelling_Test_words")
-    void nextMove_check_word_spelling_Test(String attempt, boolean isInvalid){
+    void nextMove_check_word_spelling_Test(String attempt, boolean isInCorrect){
 
         Map<String, String> resp = gameFacade.nextMove(1, attempt); // Act
 
-        assertTrue(resp.get("invalid").equals(Boolean.toString(isInvalid))); // Assert
+        assertEquals(resp.get("message").equals("Spelling was not correct."), isInCorrect); // Assert
     }
 
     static Stream<Arguments> nextMove_nextMove_game_over_Test_words() {
@@ -174,7 +174,7 @@ class GameFacadeTest {
                 Arguments.of(4, false),
                 Arguments.of(5, true),
                 Arguments.of(6, true),
-                Arguments.of(9, true),
+                Arguments.of(7, true),
                 Arguments.of(10, true),
                 Arguments.of(99, true)
         );
@@ -188,7 +188,10 @@ class GameFacadeTest {
         for (int i = 0; i <= rounds; i++) {
             response = gameFacade.nextMove(1, "cavia");
         }
+        if(GameOver){
+            int s= 0;
+        }
 
-        assertEquals(response.get("message").equals("Game over, call endGame method to save name."), GameOver);
+        assertEquals(response.get("message").equals("Game over, because you already did 5 tries in this round. call endGame method to save name."), GameOver);
     }
 }

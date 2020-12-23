@@ -1,6 +1,5 @@
 package nl.hu.lingo.Import.Persistence;
 
-import nl.hu.lingo.Import.Domain.ReadWordsDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,11 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class FileReadWordsDaoTest {
 
-    private FileReadWordsDao readWordsDao;
+    private PostgressWordsDao postgressWordsDao;
+    private ReadDao fileReadDao;
 
     @BeforeEach
     void beforeEach(){
-        this.readWordsDao = new FileReadWordsDao();
+        this.postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
+        this.fileReadDao = new FileReadDao();
     }
 
     static Stream<Arguments> readWordsFilterByWordLength_lengths() {
@@ -39,24 +40,26 @@ public class FileReadWordsDaoTest {
     @ParameterizedTest
     @MethodSource("readWordsFilterByWordLength_lengths")
     void readWordsFilterByWordLength_lengthsAccepted(int length, boolean expectation){
-        List<String> words = readWordsDao.readWordsFilterByWordLength(length);
-        boolean allWordsHaveRightLength = false;
+        List<String> words = postgressWordsDao.readWordsFilterByWordLength(length);
         if(words == null){
-            assertEquals(allWordsHaveRightLength, expectation);
+            assertEquals(false, expectation);
         } else{
-            allWordsHaveRightLength = true;
+            boolean allWordsHaveRightLength = false;
 
             for (String word : words) {
                 if(word.length() != length){
                     allWordsHaveRightLength = false;
+                    break;
                 }
+                allWordsHaveRightLength = true;
             }
+
             assertEquals(allWordsHaveRightLength, expectation);
         }
     }
     @Test
     void getAllWordsTest(){
-        List<String> words = readWordsDao.getAllWords();
+        List<String> words = fileReadDao.getAllWords();
         assertTrue(words.size() > 0);
     }
 }

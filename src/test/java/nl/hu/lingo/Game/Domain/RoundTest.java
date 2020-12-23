@@ -26,7 +26,7 @@ public class RoundTest {
     void beforeEach(){
         wordServiceMock = new WordService();
         Database database= new DataBasePostgress();
-        tryDao = new TryDaoImpl(database);
+        tryDao = new TryPostgressDao(database);
         roundDao = new RoundPostgressDao(new DataBasePostgress());
     }
 

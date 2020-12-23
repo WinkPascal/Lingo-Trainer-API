@@ -44,9 +44,10 @@ public class GameLingo implements Game {
         Map<String, String> feedback = new HashMap<>();
         if(currentRound == null){
             feedback.put("message", "Game over, call endGame method to save name.");
+            feedback.replace("Tries left", "0");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
-            if(feedback.get("message") == null) return feedback;
+            if(feedback.get("message") != null) return feedback;
 
             if(feedback.get("lettersWrong").equals("0")) {
                 int nextWordLength = 0;
@@ -70,7 +71,7 @@ public class GameLingo implements Game {
         if(getLastRound().isActive() || this.userName != null){
             return 0;
         } else{
-            gameDao.saveName(this.id, name);
+            gameDao.update(this.id, name);
             return gameDao.getScore(this.id);
         }
     }

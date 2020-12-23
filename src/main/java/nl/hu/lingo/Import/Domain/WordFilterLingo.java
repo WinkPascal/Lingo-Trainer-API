@@ -1,35 +1,33 @@
 package nl.hu.lingo.Import.Domain;
 
+import nl.hu.lingo.Import.Persistence.FileReadDao;
+import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WordFilterLingo implements WordFilter {
-    private WriteWordsDao writeWordsDao;
-    private ReadWordsDao readWordsDao;
+    private PostgressWordsDao postgressWordsDao;
+    private FileReadDao fileReadDao;
     private int lenght;
 
-    public WordFilterLingo(WriteWordsDao writeWordsDao, ReadWordsDao readWordsDao, int lenght){
-        this.writeWordsDao = writeWordsDao;
-        this.readWordsDao = readWordsDao;
+    public WordFilterLingo(PostgressWordsDao postgressWordsDao, FileReadDao fileReadDao, int lenght){
+        this.postgressWordsDao = postgressWordsDao;
+        this.fileReadDao = fileReadDao;
         this.lenght = lenght;
     }
 
     public String pickwordForGame(){
         if (lenght == 5 || lenght == 6 || lenght == 7) {
-            List<String> words = readWordsDao.readWordsFilterByWordLength(lenght);
-            if(words == null){
-                List<String> allWords = filterWordsForGame(readWordsDao.getAllWords());
-                try{
-                    writeWordsDao.writeWords(allWords, lenght);
-                    words = readWordsDao.readWordsFilterByWordLength(lenght);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            List<String> words = postgressWordsDao.readWordsFilterByWordLength(lenght);
+            if(words.size() == 0){
+                List<String> allWords = filterWordsForGame(fileReadDao.getAllWords());
+                postgressWordsDao.refreshWordsWithLength(allWords, lenght);
+                words = postgressWordsDao.readWordsFilterByWordLength(lenght);
             }
-        int s = words.size();
-            int randomNum = ThreadLocalRandom.current().nextInt(0, words.size());
+            int randomNum = ThreadLocalRandom.current().nextInt(0, words.size()-1);
 
             return words.get(randomNum);
         }
@@ -49,7 +47,7 @@ public class WordFilterLingo implements WordFilter {
     }
     public List<String> getAllWordsWithLength(){
         if(lenght == 5 || lenght == 6 || lenght == 7) {
-            return readWordsDao.readWordsFilterByWordLength(lenght);
+            return postgressWordsDao.readWordsFilterByWordLength(lenght);
         }
         return null;
     }

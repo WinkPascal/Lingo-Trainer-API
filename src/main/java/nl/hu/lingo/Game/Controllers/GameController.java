@@ -11,24 +11,16 @@ import java.util.Map;
 
 @RestController
 public class GameController {
-    @GetMapping("/")
-    public String getHelloWorld(){
-        return "hello wosrld";
-    }
-
 
     @GetMapping("/startGame")
     public int startGame(){
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
         WordServiceInterface wordService = new WordService();
-        TryDao tryDao = new TryDaoImpl(database);
-
+        TryDao tryDao = new TryPostgressDao(database);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
-        int id = gameFacade.startGame();
-
-        return id;
+        return gameFacade.startGame();
     }
 
     @GetMapping("/nextMove")
@@ -36,7 +28,7 @@ public class GameController {
         Database database = new DataBasePostgress();
         WordServiceInterface wordService = new WordService();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
-        TryDao tryDao = new TryDaoImpl(database);
+        TryDao tryDao = new TryPostgressDao(database);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
         Map<String, String> feedback = gameFacade.nextMove(gameId, word);
@@ -44,15 +36,15 @@ public class GameController {
     }
 
     @GetMapping("/gameFinished")
-    public String gameFinished(int id, String userName) {
+    public int gameFinished(int id, String userName) {
         Database database = new DataBasePostgress();
         GameDao gameRepository = new GamePostgressDaoImpl(database);
         WordService wordService = new WordService();
-        TryDao tryDao = new TryDaoImpl(database);
+        TryDao tryDao = new TryPostgressDao(database);
 
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
 
         int score = gameFacade.endGame(id, userName);
-        return null;
+        return score;
     }
 }

@@ -13,10 +13,7 @@ public interface GameDao {
 
     int newGame();
 
-    void saveTry(int roundId, String word);
-
-
-    void saveName(int id, String name);
+    void update(int id, String name);
 
     int getScore(int id);
 

@@ -1,11 +1,9 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.*;
-import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GamePostgressDaoImpl implements GameDao {
@@ -24,7 +22,8 @@ public class GamePostgressDaoImpl implements GameDao {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String username = rs.getString("username");
-                List<Round> rounds = getRoundsByGameId(id);
+                RoundDao roundPostgressDao = new RoundPostgressDao(new DataBasePostgress());
+                List<Round> rounds = roundPostgressDao.getRoundsByGameId(id);
                 RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
                 game = new GameLingo(id, username, rounds, this, wordService, roundDao);
             }
@@ -33,47 +32,8 @@ public class GamePostgressDaoImpl implements GameDao {
         }
         return game;
     }
-    
-    private List<Round> getRoundsByGameId(int id){
-        List<Round> rounds = new ArrayList<>();
-        String query = "select * from round where gameId = "+id;
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                int roundId = rs.getInt("id");
-                String word = rs.getString("word");
-                List<Try> tries = getTriesByRoundId(roundId);
-                RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
-                Round round = new Round(roundId, word,tries, roundDao);
-                rounds.add(round);
-            }
-        } catch (SQLException e ) {
-            throw new Error(e);
-        }
-        return rounds;
-    }
 
-    private List<Try> getTriesByRoundId(int id){
-        List<Try> tries = new ArrayList<>();
-        TryDao tryDao = new TryDaoImpl(new DataBasePostgress());
-        WordServiceInterface wordService = new WordService();
-        String query = "select * from try where roundId = "+id;
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                String word = rs.getString("word");
-                int tryId = rs.getInt("id");
-                Try try_ = new Try(tryId, word, wordService, tryDao);
-                tries.add(try_);
-            }
-        } catch (SQLException e ) {
-            throw new Error(e);
-        }
-        return tries;
-    }
-
+    @Override
     public int newGame(){
         int id = 0;
         try{
@@ -95,30 +55,18 @@ public class GamePostgressDaoImpl implements GameDao {
         return id;
     }
 
-     public void saveTry(int roundId, String word){
-         try{
-             Statement  stmt = conn.createStatement();
-
-             String sql = "INSERT INTO try(word, roundid) VALUES ('"+word+"', "+roundId+")";
-             stmt.executeUpdate(sql);
-         } catch (SQLException e ) {
-             throw new Error(e);
-         }
-     }
-
-
-
-    public void saveName(int id, String name){
+    @Override
+    public void update(int id, String name){
         try{
             Statement  stmt = conn.createStatement();
             String sql = "UPDATE game set username = '"+name+"' WHERE id = "+ id;
             stmt.executeUpdate(sql);
-
         } catch (SQLException e ) {
             throw new Error(e);
         }
     }
 
+    @Override
     public int getScore(int id){
         String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.id = "+id;
         int score = 0;
@@ -134,6 +82,7 @@ public class GamePostgressDaoImpl implements GameDao {
         return score;
     }
 
+    @Override
     public int getHighscore(String username) {
         String query = "select count(r.id) as score from game g join round r on g.id = r.gameid " +
                 "where g.username = '"+username+"'  " +

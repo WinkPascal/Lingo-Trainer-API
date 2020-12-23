@@ -1,7 +1,8 @@
 package nl.hu.lingo.Import.Domain;
 
-import nl.hu.lingo.Import.Persistence.FileReadWordsDao;
-import nl.hu.lingo.Import.Persistence.FileWriteWordsDao;
+import nl.hu.lingo.Import.Persistence.DatabasePostgress;
+import nl.hu.lingo.Import.Persistence.FileReadDao;
+import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,26 +15,24 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class WordFilterLingoTest {
-    private ReadWordsDao readWordsDaoMock;
-    private WriteWordsDao writeWordsDaoMock;
+    private PostgressWordsDao postgressWordsDaoMock;
+    private FileReadDao fileReadDaoMock;
 
     @BeforeEach
     void beforeEach(){
-        this.readWordsDaoMock = mock(FileReadWordsDao.class);
-        this.writeWordsDaoMock = mock(FileWriteWordsDao.class);
-
+        this.postgressWordsDaoMock = mock(PostgressWordsDao.class);
+        this.fileReadDaoMock = mock(FileReadDao.class);
 
         List<String> wordsFiveLetters = new ArrayList<>();
         wordsFiveLetters.add("braam");
         wordsFiveLetters.add("fiets");
         wordsFiveLetters.add("stoom");
-        when(readWordsDaoMock.readWordsFilterByWordLength(anyInt()))
+        when(postgressWordsDaoMock.readWordsFilterByWordLength(anyInt()))
                 .thenReturn(wordsFiveLetters);
     }
 
@@ -53,17 +52,19 @@ public class WordFilterLingoTest {
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void pickwordForGame_Test(int length, boolean isNull){
-        WordFilter wordFilter = new WordFilterLingo(writeWordsDaoMock, readWordsDaoMock, length);
+        PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
+        FileReadDao fileReadDao = new FileReadDao();
+
+        WordFilter wordFilter = new WordFilterLingo(postgressWordsDao, fileReadDao, length);
         String word = wordFilter.pickwordForGame();
 
         assertEquals(isNull, word == null);
     }
 
-
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void getAllWordsWithLength_Test(int length, boolean isNull){
-        WordFilter wordFilter = new WordFilterLingo(writeWordsDaoMock, readWordsDaoMock, length);
+        WordFilter wordFilter = new WordFilterLingo(postgressWordsDaoMock, fileReadDaoMock, length);
         List<String> words = wordFilter.getAllWordsWithLength();
 
         assertEquals(isNull, words == null);
