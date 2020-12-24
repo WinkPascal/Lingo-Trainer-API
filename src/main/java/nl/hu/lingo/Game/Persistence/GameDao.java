@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.List;
 
 public interface GameDao {
-    Game getGameById(int id, WordServiceInterface wordService);
+    Game getGameById(int id);
 
     int newGame();
 

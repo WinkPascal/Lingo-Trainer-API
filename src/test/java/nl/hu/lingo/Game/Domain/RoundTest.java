@@ -15,20 +15,26 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class RoundTest {
-    private TryDao tryDao;
+    private TryDao tryDaoMock;
     private  WordService wordServiceMock;
-    private RoundDao roundDao;
+    private RoundDao roundDaoMock;
 
     @BeforeEach
     void beforeEach(){
-        wordServiceMock = new WordService();
-        Database database= new DataBasePostgress();
-        tryDao = new TryPostgressDao(database);
-        roundDao = new RoundPostgressDao(new DataBasePostgress());
+        wordServiceMock = mock(WordService.class);
+        tryDaoMock = mock(TryPostgressDao.class);
+        roundDaoMock = mock(RoundPostgressDao.class);
     }
+
+    //=====================================================================================================================
+    //====================================================== IsCorrect ====================================================
+    //=====================================================================================================================
 
     static Stream<Arguments> IsCorrect_set() {
         return Stream.of(
@@ -46,18 +52,27 @@ public class RoundTest {
     @ParameterizedTest
     @MethodSource("IsCorrect_set")
     void IsCorrect(int amountPreviousTries, String word, String message){
+        List<String> words = new ArrayList<>();
+        words.add("fiets");
+        words.add("zweep");
+        when(wordServiceMock.getAllWordsWithLength(anyInt()))
+                .thenReturn(words);
+
         List<Try> tries = new ArrayList<>();
         for (int i = 0; i < amountPreviousTries; i++) {
-            tries.add(new Try(0, "zweep", wordServiceMock, tryDao));
+            tries.add(new Try(0, "zweep",null, wordServiceMock, tryDaoMock));
         }
 
-        Round round = new Round(28, "fiets", tries, roundDao);
-        Try try_  = new Try(0, word, wordServiceMock, tryDao);
+        Round round = new Round(28, "fiets", tries, roundDaoMock);
+        Try try_  = new Try(0, word, null, wordServiceMock, tryDaoMock);
 
         Map<String, String> response = round.IsCorrect(try_);
         assertEquals(response.get("message") , message);
     }
 
+    //=====================================================================================================================
+    //======================================================= isActive ====================================================
+    //=====================================================================================================================
 
     static Stream<Arguments> isActive_set() {
         return Stream.of(
@@ -77,17 +92,21 @@ public class RoundTest {
     void isActive(int amountPreviousTries, boolean expectation){
         List<Try> tries = new ArrayList<>();
         for (int i = 0; i < amountPreviousTries; i++) {
-            tries.add(new Try(0, "zweep", wordServiceMock, tryDao));
+            tries.add(new Try(0, "zweep",null, wordServiceMock, tryDaoMock));
         }
-        Round round = new Round(0, "test", tries, null);
+        Round round = new Round(0, "test", tries, roundDaoMock);
 
         assertEquals(round.isActive(), expectation);
     }
 
+    //=====================================================================================================================
+    //======================================================= getId =======================================================
+    //=====================================================================================================================
+
     @Test
     void getId(){
         int id = 10;
-        Round round = new Round(id, "test", null, null);
+        Round round = new Round(id, "test", null, roundDaoMock);
         assertEquals(round.getId(), id);
     }
 }

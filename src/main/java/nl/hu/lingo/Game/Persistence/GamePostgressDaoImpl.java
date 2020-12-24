@@ -1,6 +1,7 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.*;
+import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
 import java.sql.*;
@@ -14,8 +15,9 @@ public class GamePostgressDaoImpl implements GameDao {
     }
 
     @Override
-    public Game getGameById(int id, WordServiceInterface wordService) {
+    public Game getGameById(int id) {
         Game game = null;
+        WordServiceInterface wordService = new WordService();
         String query = "select * from game where id = "+id;
         try {
             Statement stmt = conn.createStatement();

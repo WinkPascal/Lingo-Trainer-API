@@ -47,4 +47,17 @@ public class GameController {
         int score = gameFacade.endGame(id, userName);
         return score;
     }
+
+    @GetMapping("/getHighscore")
+    public int getHighscore(String userName) {
+        Database database = new DataBasePostgress();
+        GameDao gameRepository = new GamePostgressDaoImpl(database);
+        WordService wordService = new WordService();
+        TryDao tryDao = new TryPostgressDao(database);
+
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
+
+        int score = gameFacade.getHighscore(userName);
+        return score;
+    }
 }

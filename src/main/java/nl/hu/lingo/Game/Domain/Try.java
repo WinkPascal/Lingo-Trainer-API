@@ -3,6 +3,7 @@ package nl.hu.lingo.Game.Domain;
 import nl.hu.lingo.Game.Persistence.TryDao;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
+import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +13,9 @@ public class Try {
     private String word;
     private WordServiceInterface wordService;
     private TryDao tryDao;
+    private Timestamp datetime;
 
-    public Try(int id, String word, WordServiceInterface wordService, TryDao tryDao){
+    public Try(int id, String word, Timestamp datetime, WordServiceInterface wordService, TryDao tryDao){
         this.id = id;
         this.word = word;
         this.wordService = wordService;

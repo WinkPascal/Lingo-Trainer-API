@@ -65,9 +65,9 @@ public class WordFilterLingoTest {
     @MethodSource("word_Test_lengths")
     void getAllWordsWithLength_Test(int length, boolean isNull){
         WordFilter wordFilter = new WordFilterLingo(postgressWordsDaoMock, fileReadDaoMock, length);
+
         List<String> words = wordFilter.getAllWordsWithLength();
 
         assertEquals(isNull, words == null);
     }
-
 }

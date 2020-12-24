@@ -4,10 +4,7 @@ import nl.hu.lingo.Game.Domain.Try;
 import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +17,7 @@ public class TryPostgressDao implements TryDao {
     public void save(int roundId, String word){
         try{
             Statement stmt = conn.createStatement();
-            String sql = "INSERT INTO try(word, roundid) VALUES ('"+word+"', "+roundId+")";
+            String sql = "INSERT INTO try(word, roundid, datetime) VALUES ('"+word+"', "+roundId+", current_timestamp)";
             stmt.executeUpdate(sql);
         } catch (SQLException e ) {
             throw new Error(e);
@@ -38,7 +35,8 @@ public class TryPostgressDao implements TryDao {
             while (rs.next()) {
                 String word = rs.getString("word");
                 int tryId = rs.getInt("id");
-                Try try_ = new Try(tryId, word, wordService, tryDao);
+                Timestamp datetime = rs.getTimestamp("datetime");
+                Try try_ = new Try(tryId, word, datetime, null, null);
                 tries.add(try_);
             }
         } catch (SQLException e ) {
@@ -47,4 +45,5 @@ public class TryPostgressDao implements TryDao {
         return tries;
     }
 }
+
 

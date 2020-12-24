@@ -53,7 +53,7 @@ class GameFacadeTest {
         List<Round> rounds = new ArrayList<>();
         rounds.add(new Round(1, wordToGuess, new ArrayList<>(), roundDaoMock));
         game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
-        when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
+        when(gameDaoMock.getGameById(anyInt()))
                 .thenReturn(game);
 
         tryDaoMock = mock(TryPostgressDao.class);
@@ -81,17 +81,17 @@ class GameFacadeTest {
     @Test
     void endGame_game_over(){
         List<Try> tries = new ArrayList<>();
-        tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", wordServiceMock, tryDaoMock));
+        tries.add(new Try(1, "",null, wordServiceMock, tryDaoMock));
+        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
 
         List<Round> rounds = new ArrayList<>();
         rounds.add(new Round(1, "fiets", tries, roundDaoMock));
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
-        when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
+        when(gameDaoMock.getGameById(anyInt()))
                 .thenReturn(game);
         when(gameDaoMock.getScore(anyInt()))
                 .thenReturn(5);
@@ -109,7 +109,7 @@ class GameFacadeTest {
         rounds.add(new Round(1, "fiets", tries, roundDaoMock));
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
-        when(gameDaoMock.getGameById(anyInt(), eq(wordServiceMock)))
+        when(gameDaoMock.getGameById(anyInt()))
                 .thenReturn(game);
         when(gameDaoMock.getScore(anyInt()))
                 .thenReturn(5);

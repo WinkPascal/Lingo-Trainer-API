@@ -23,14 +23,14 @@ public class GameFacadeLingo {
     }
 
     public Map<String, String> nextMove(int gameId, String word) {
-        Game game = gameDao.getGameById(gameId, wordService);
-        Try currentTry = new Try(0, word, wordService, tryDao);
+        Game game = gameDao.getGameById(gameId);
+        Try currentTry = new Try(0, word, null, wordService, tryDao);
 
         return game.nextMove(currentTry);
     }
 
     public int endGame(int id, String name) {
-        Game game = gameDao.getGameById(id, wordService);
+        Game game = gameDao.getGameById(id);
         return game.endGame(name);
     }
 
