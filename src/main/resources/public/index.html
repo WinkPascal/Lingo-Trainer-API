@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>index</title>
+</head>
+<body>
+    <h1>Lingo</h1>
+
+    <a>game id:</a><input type="text" id="gameId"/><input type="button" onclick="startgame()" value="start new game">
+
+    <h2>Tries left: 5</h2>
+    <h2>Message</h2>
+    <input type="text" id="try"/>
+
+    <button onclick="nextMove()">nextMove</button>
+</body>
+<script>
+    function startgame(){
+        fetch('http://localhost:8080/startGame', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(function (id) {
+                document.getElementById("gameId").innerHTML = id;
+            });
+    }
+
+    function nextMove(){
+            fetch('http://localhost:8080/startGame', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(function (id) {
+                document.getElementById("gameId").innerHTML = id;
+            });
+    }
+
+    function highscore(){
+        fetch('http://localhost:8080/highscore', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(function (id) {
+                document.getElementById("gameId").innerHTML = id;
+            });
+    }
+</script>
+</html>

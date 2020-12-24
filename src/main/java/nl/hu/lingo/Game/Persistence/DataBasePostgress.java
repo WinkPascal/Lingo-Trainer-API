@@ -1,10 +1,13 @@
 package nl.hu.lingo.Game.Persistence;
 
+import org.springframework.stereotype.Repository;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+@Repository
 public class DataBasePostgress implements Database {
 
     private static Connection conn = null;

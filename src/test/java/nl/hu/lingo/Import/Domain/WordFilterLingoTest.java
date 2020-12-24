@@ -20,20 +20,15 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class WordFilterLingoTest {
-    private PostgressWordsDao postgressWordsDaoMock;
-    private FileReadDao fileReadDaoMock;
 
     @BeforeEach
     void beforeEach(){
-        this.postgressWordsDaoMock = mock(PostgressWordsDao.class);
-        this.fileReadDaoMock = mock(FileReadDao.class);
 
         List<String> wordsFiveLetters = new ArrayList<>();
         wordsFiveLetters.add("braam");
         wordsFiveLetters.add("fiets");
         wordsFiveLetters.add("stoom");
-        when(postgressWordsDaoMock.readWordsFilterByWordLength(anyInt()))
-                .thenReturn(wordsFiveLetters);
+
     }
 
     static Stream<Arguments> word_Test_lengths() {
@@ -52,10 +47,7 @@ public class WordFilterLingoTest {
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void pickwordForGame_Test(int length, boolean isNull){
-        PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
-        FileReadDao fileReadDao = new FileReadDao();
-
-        WordFilter wordFilter = new WordFilterLingo(postgressWordsDao, fileReadDao, length);
+        WordFilter wordFilter = new WordFilterLingo(length);
         String word = wordFilter.pickwordForGame();
 
         assertEquals(isNull, word == null);
@@ -64,7 +56,7 @@ public class WordFilterLingoTest {
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void getAllWordsWithLength_Test(int length, boolean isNull){
-        WordFilter wordFilter = new WordFilterLingo(postgressWordsDaoMock, fileReadDaoMock, length);
+        WordFilter wordFilter = new WordFilterLingo(length);
         List<String> words = wordFilter.getAllWordsWithLength();
 
         assertEquals(isNull, words == null);

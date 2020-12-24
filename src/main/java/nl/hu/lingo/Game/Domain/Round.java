@@ -1,22 +1,25 @@
 package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.RoundDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class Round {
     private int id;
     private String word;
     private List<Try> tries;
+    @Autowired
     private RoundDao roundDao;
 
-    public Round(int id, String word, List<Try> tries, RoundDao roundDao) {
+    public Round(int id, String word, List<Try> tries) {
         this.id = id;
         this.word = word;
         this.tries = tries;
-        this.roundDao = roundDao;
     }
 
     public Map<String, String> IsCorrect(Try currentTry) {
@@ -52,6 +55,7 @@ public class Round {
     public void save(int gameid){
         roundDao.save(word, gameid);
     }
+
     public int getId(){
         return id;
     }

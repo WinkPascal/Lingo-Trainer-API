@@ -2,19 +2,24 @@ package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.List;
 
+@Repository
 public class GamePostgressDaoImpl implements GameDao {
-    private Connection conn = null;
+    private Connection conn;
+    @Autowired
+    private Database dataBasePostgress;
 
-    public GamePostgressDaoImpl(Database database) {
-        conn = database.getConn();
+    public GamePostgressDaoImpl() {
+        conn = dataBasePostgress.getConn();
     }
 
     @Override
-    public Game getGameById(int id, WordServiceInterface wordService) {
+    public Game getGameById(int id) {
         Game game = null;
         String query = "select * from game where id = "+id;
         try {
@@ -22,10 +27,11 @@ public class GamePostgressDaoImpl implements GameDao {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String username = rs.getString("username");
-                RoundDao roundPostgressDao = new RoundPostgressDao(new DataBasePostgress());
+
+                RoundDao roundPostgressDao = new RoundPostgressDao();
                 List<Round> rounds = roundPostgressDao.getRoundsByGameId(id);
-                RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
-                game = new GameLingo(id, username, rounds, this, wordService, roundDao);
+
+                game = new GameLingo(id, username, rounds);
             }
         } catch (SQLException e ) {
             throw new Error(e);

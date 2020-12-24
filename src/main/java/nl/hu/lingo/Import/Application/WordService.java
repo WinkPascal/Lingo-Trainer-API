@@ -2,18 +2,15 @@ package nl.hu.lingo.Import.Application;
 
 import nl.hu.lingo.Import.Domain.WordFilter;
 import nl.hu.lingo.Import.Domain.WordFilterLingo;
-import nl.hu.lingo.Import.Persistence.DatabasePostgress;
-import nl.hu.lingo.Import.Persistence.FileReadDao;
-import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class WordService implements WordServiceInterface {
     public String pickwordForGame(int length) {
         if(length == 5 || length == 6 || length == 7){
-            PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
-            FileReadDao fileReadDao = new FileReadDao();
-            WordFilter wordFilterLingo = new WordFilterLingo(postgressWordsDao, fileReadDao, length);
+            WordFilter wordFilterLingo = new WordFilterLingo(length);
             return wordFilterLingo.pickwordForGame();
         } else{
             return null;
@@ -22,10 +19,7 @@ public class WordService implements WordServiceInterface {
 
     public List<String> getAllWordsWithLength(int length){
         if(length == 5 || length == 6 || length == 7) {
-
-            PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
-            FileReadDao fileReadDao = new FileReadDao();
-            WordFilter wordFilterLingo = new WordFilterLingo(postgressWordsDao, fileReadDao, length);
+            WordFilter wordFilterLingo = new WordFilterLingo(length);
 
             return wordFilterLingo.getAllWordsWithLength();
         }

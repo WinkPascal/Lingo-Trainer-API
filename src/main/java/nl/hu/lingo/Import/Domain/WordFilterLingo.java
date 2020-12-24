@@ -2,20 +2,25 @@ package nl.hu.lingo.Import.Domain;
 
 import nl.hu.lingo.Import.Persistence.FileReadDao;
 import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class WordFilterLingo implements WordFilter {
-    private PostgressWordsDao postgressWordsDao;
-    private FileReadDao fileReadDao;
     private int lenght;
 
-    public WordFilterLingo(PostgressWordsDao postgressWordsDao, FileReadDao fileReadDao, int lenght){
-        this.postgressWordsDao = postgressWordsDao;
-        this.fileReadDao = fileReadDao;
+    @Autowired
+    private PostgressWordsDao postgressWordsDao;
+    @Autowired
+    private FileReadDao fileReadDao;
+
+
+    public WordFilterLingo(int lenght){
         this.lenght = lenght;
     }
 

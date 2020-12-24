@@ -2,6 +2,8 @@ package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Round;
 import nl.hu.lingo.Game.Domain.Try;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -10,10 +12,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class RoundPostgressDao implements RoundDao {
-    private Connection conn = null;
-
-    public RoundPostgressDao(Database database) {
+    private Connection conn;
+    @Autowired
+    private Database database;
+    public RoundPostgressDao() {
         conn = database.getConn();
     }
 
@@ -40,8 +44,7 @@ public class RoundPostgressDao implements RoundDao {
 
                 TryDao tryPostgressDao = new TryPostgressDao(new DataBasePostgress());
                 List<Try> tries = tryPostgressDao.getTriesByRoundId(roundId);
-                RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
-                Round round = new Round(roundId, word,tries, roundDao);
+                Round round = new Round(roundId, word,tries);
                 rounds.add(round);
             }
         } catch (SQLException e ) {

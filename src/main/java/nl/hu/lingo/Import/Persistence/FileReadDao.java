@@ -1,10 +1,13 @@
 package nl.hu.lingo.Import.Persistence;
 
+import org.springframework.stereotype.Repository;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@Repository
 public class FileReadDao implements ReadDao {
 
     public List<String> getAllWords(){

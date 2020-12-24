@@ -2,29 +2,35 @@ package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.TryDao;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class Try {
     private int id;
     private String word;
+    private Timestamp datetime;
+    @Autowired
     private WordServiceInterface wordService;
+    @Autowired
     private TryDao tryDao;
 
-    public Try(int id, String word, WordServiceInterface wordService, TryDao tryDao){
+    public Try(int id, String word, Timestamp datetime){
         this.id = id;
+        this.datetime = datetime;
         this.word = word;
-        this.wordService = wordService;
-        this.tryDao = tryDao;
     }
 
     public Map<String, String> getFeedback(String correctWord) {
         Map<String, String> feedback = new HashMap<>();
         boolean correctLength = true;
         if(this.word.length() != correctWord.length()) correctLength = false;
-
 
         int lettersCorrect = 0;
         int lettersInWord = 0;

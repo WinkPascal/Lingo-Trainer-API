@@ -1,6 +1,8 @@
 package nl.hu.lingo.Import.Persistence;
 
 
+import org.springframework.stereotype.Repository;
+
 import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class PostgressWordsDao implements WordsDao {
     private Connection conn;
 

@@ -3,35 +3,39 @@ package nl.hu.lingo.Game.Domain;
 import nl.hu.lingo.Game.Persistence.GameDao;
 import nl.hu.lingo.Game.Persistence.RoundDao;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class GameLingo implements Game {
     private int id;
     private String userName;
     private List<Round> rounds;
-    private GameDao gameDao;
-    private WordServiceInterface wordService;
-    private RoundDao roundDao;
 
-    public GameLingo(int id, String userName, List<Round> rounds, GameDao gameDao, WordServiceInterface wordService, RoundDao roundDao){
+    @Autowired
+    private GameDao gameDao;
+    @Autowired
+    private WordServiceInterface wordService;
+
+    public GameLingo(int id, String userName, List<Round> rounds){
         this.id = id;
         this.userName = userName;
         this.rounds = rounds;
-        this.gameDao = gameDao;
-        this.wordService = wordService;
-        this.roundDao = roundDao;
     }
 
     private Round getLastRound(){
         Round lastRound = null;
         int biggestId = 0;
-        for (Round round : rounds) {
-            int roundId = round.getId();
-            if (biggestId < roundId) {
-                lastRound = round;
+        if(rounds != null){
+            for (Round round : rounds) {
+                int roundId = round.getId();
+                if (biggestId < roundId) {
+                    lastRound = round;
+                }
             }
         }
         return lastRound;
@@ -43,8 +47,7 @@ public class GameLingo implements Game {
 
         Map<String, String> feedback = new HashMap<>();
         if(currentRound == null){
-            feedback.put("message", "Game over, call endGame method to save name.");
-            feedback.replace("Tries left", "0");
+            feedback.put("message", "Game over, This game has no rounds");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
             if(feedback.get("message") != null) return feedback;
@@ -60,7 +63,7 @@ public class GameLingo implements Game {
                 feedback.replace("Tries left", "5");
                 feedback.put("message", "Attempt was correct, new round has started");
             } else{
-                feedback.put("message", "This was not the right word.");
+                feedback.put("message", "This was not the right word. Try again");
             }
         }
         return feedback;
@@ -87,8 +90,13 @@ public class GameLingo implements Game {
 
     private String newRound(int length){
         String word = wordService.pickwordForGame(length);
-        Round round = new Round(0, word, null, roundDao);
+        Round round = new Round(0, word, null);
         round.save(this.id);
         return word;
+    }
+
+    @Override
+    public int getHighscore(){
+        return gameDao.getHighscore(userName);
     }
 }

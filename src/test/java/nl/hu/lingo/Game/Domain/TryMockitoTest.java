@@ -17,27 +17,46 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class TryTest {
+public class TryMockitoTest {
+    //=====================================================================================================================
+    //==================================================== getFeedback ====================================================
+    //=====================================================================================================================
 
     static Stream<Arguments> getFeedback_set() {
         return Stream.of(
+                // five letter words
                 Arguments.of("baard", "bergen", 0, 6, 0),
                 Arguments.of("baard", "bonje", 1, 4, 0),
       //          Arguments.of("baard", "barst", 2, 1, 1), moet nog worden gefixt
       //          Arguments.of("baard", "draad", 2, 1, 2), moet nog worden gefixt
-                Arguments.of("baard", "baard", 5, 0, 0)
-        );
+                Arguments.of("baard", "baard", 5, 0, 0),
+                // six letter words
+                Arguments.of("bergen", "baard", 0, 5, 0),
+                Arguments.of("bergen", "berden", 5, 1, 0),
+                Arguments.of("bergen", "gerben", 4, 0, 2),
+                Arguments.of("bergen", "bergen", 6, 0, 0),
+                // seven letter words
+                Arguments.of("aaaabbb", "aaaaaaaa", 0, 8, 0),
+                Arguments.of("aaaabbb", "aaaabbb", 7, 0, 0),
+                Arguments.of("aaaabbb", "aaaabbb", 7, 0, 0)
+            );
     }
 
     @ParameterizedTest
     @MethodSource("getFeedback_set")
     void getFeedback(String correctWord, String attemptWord, int lettersCorrect, int lettersAbsent, int present){
-        Try try_ = new Try(0, attemptWord, null, null);
+        Try try_ = new Try(0, attemptWord, null);
+
         Map<String, String> feedback = try_.getFeedback(correctWord);
+
         assertTrue(feedback.get("lettersCorrect").equals(Integer.toString(lettersCorrect)));
         assertTrue(feedback.get("lettersInWord").equals(Integer.toString(present)));
         assertTrue(feedback.get("lettersWrong").equals(Integer.toString(lettersAbsent)));
     }
+
+    //=====================================================================================================================
+    //======================================== CheckSpellingContraints ====================================================
+    //=====================================================================================================================
 
     static Stream<Arguments> CheckSpellingContraints_set() {
         return Stream.of(
@@ -68,14 +87,14 @@ public class TryTest {
         WordServiceInterface wordService = mock(WordService.class);
         when(wordService.getAllWordsWithLength(anyInt()))
                 .thenReturn(Arrays.asList("pizza"));
+        Try try_ = new Try(0, attemptWord,null);
 
-        Try try_ = new Try(0, attemptWord, wordService, null);
         Map<String, String> feedbackMap = try_.CheckSpellingContraints();
+
         if(feedbackMap.get("feedback") == null && feedback == null){
             assertTrue(feedbackMap.get("feedback") == feedback);
         } else{
             assertTrue(feedbackMap.get("feedback").equals(feedback));
         }
     }
-
 }
