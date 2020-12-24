@@ -1,0 +1,171 @@
+<html>
+<head>
+    <title>index</title>
+</head>
+<body>
+    <h1>Lingo</h1>
+
+    <div class="WichGame">
+        <a>game id:</a>
+        <input type="text" id="gameId"/> <br>
+        <input type="button" onclick="startgame()" value="start new game">
+    </div>
+    <div class="highscore">
+        <p id="highscore"></p>
+        <input type="text" id="userName"/> <br>
+        <input type="button" onclick="getHighscore()" value="get highscore">
+    </div>
+    <div class="game">
+        <h2>Game</h2>
+        <p>Message: </p><p id="message"></p>
+        <p>Tries left: </p><p id="tries"></p>
+        <p>Letters in word: </p><p id="lettersinword"></p>
+
+        <p id="feedbackTekst"></p>
+        <p>10 seconden</p>
+
+        <input type="text" id="attempt"/>
+        <button onclick="nextMove()">submit</button>
+    </div>
+
+    <div id="feedback" class="feedback">
+
+    </div>
+
+    <div>
+        <h3>end game</h3>
+        <p id="score"></p>
+        <input type="text" id="userName_end_game"/> <br>
+        <input type="button" onclick="endGame()" value="end game">
+    </div>
+<style>
+    .WichGame{
+        width: 200px;
+        height: 100px;
+        border: 2px solid black;
+    }
+    .WichGame #gameId {
+        width: 40px;
+    }
+    .highscore{
+        width: 200px;
+        height: 150px;
+        border: 2px solid black;
+    }
+    .game{
+        width:400px;
+        border: 2px solid black;
+    }
+    .feedback div{
+        float:left;
+        position: relative;
+        width: 30px;
+        height: 40px;
+        margin:10px;
+        color: white;
+        text-align: center;
+        font-size: 30px;
+    }
+</style>
+</body>
+<script>
+    function startgame(){
+        fetch('http://localhost:8080/startGame', {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(function (id) {
+            document.getElementById("gameId").value = id;
+            document.getElementById("message").value = "Nog 5 pogingen";
+        });
+    }
+
+    function nextMove(){
+        var formData = new FormData();
+        formData.append("gameId", document.getElementById("gameId").value);
+        formData.append("word", document.getElementById("attempt").value);
+        var encData = new URLSearchParams(formData.entries());
+
+        fetch('http://localhost:8080/nextMove', {
+            method: 'POST',
+            body: encData
+        })
+            .then(response => response.json())
+            .then(function (response) {
+                console.log(response);
+                if(document.getElementById("message").innerText == "Attempt was correct, new round has started"){
+                    var feedbackElement = document.getElementById("feedback");
+                    feedbackElement.innerHTML = '';
+                }
+                document.getElementById("message").innerText = response.message;
+                document.getElementById("feedbackTekst").innerText = response.feedback;
+                document.getElementById("tries").innerText = response.triesleft;
+                document.getElementById("lettersinword").innerText = response.lettersInWord;
+                showFeedback(response);
+            });
+    }
+    function showFeedback(feedback){
+        var i = 0;
+        var index = i.toString();
+        var feedbackElement = document.getElementById("feedback");
+        var attemptWord = document.getElementById("attempt").value;
+        while (true) {
+            var feedbackOfLetter = feedback[index];
+            if (typeof feedbackOfLetter == 'undefined') break;
+
+            var letterDiv = document.createElement("div");
+            switch(feedbackOfLetter) {
+                case "absent":
+                    letterDiv.style.backgroundColor = "red";
+                    break;
+                case "present":
+                    letterDiv.style.backgroundColor = "orange";
+                    break;
+                case "correct":
+                    letterDiv.style.backgroundColor = "green";
+                    break;
+            }
+            letterDiv.innerText = attemptWord.charAt(index);
+            feedbackElement.appendChild(letterDiv);
+
+            i++;
+            index = i.toString();
+        }
+        feedbackElement.appendChild(document.createElement("br"));
+        feedbackElement.appendChild(document.createElement("br"));
+        feedbackElement.appendChild(document.createElement("br"));
+        feedbackElement.appendChild(document.createElement("br"));
+    }
+
+    function getHighscore(){
+        var username = document.getElementById("userName").value;
+        fetch('http://localhost:8080/getHighscore/'+ username, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(function (score) {
+                document.getElementById("highscore").innerHTML = "The highscore of user "+username+" is "+score +" points";
+            });
+    }
+    function endGame(){
+        var formData = new FormData();
+        formData.append("id", document.getElementById("gameId").value);
+        formData.append("username", document.getElementById("userName_end_game").value);
+        var encData = new URLSearchParams(formData.entries());
+
+        fetch('http://localhost:8080/gameFinished', {
+            method: 'POST',
+            body: encData
+        })
+            .then(response => response.json())
+            .then(function (score) {
+                console.log(score);
+                if(score == "0"){
+                    document.getElementById("score").innerText = "Game is not finished yet, already ended or not all fields are filled in correctly.";
+                } else{
+                    document.getElementById("score").innerText = "Game finished with "+score+" points";
+                }
+            });
+    }
+</script>
+</html>

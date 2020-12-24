@@ -24,8 +24,9 @@ public class GameFacadeLingo {
 
     public Map<String, String> nextMove(int gameId, String word) {
         Game game = gameDao.getGameById(gameId);
-        Try currentTry = new Try(0, word, null, wordService, tryDao);
+        if(game == null) return null;
 
+        Try currentTry = new Try(0, word, null, wordService, tryDao);
         return game.nextMove(currentTry);
     }
 

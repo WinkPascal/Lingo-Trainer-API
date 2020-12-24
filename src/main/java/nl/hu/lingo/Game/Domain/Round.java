@@ -37,8 +37,8 @@ public class Round {
         }
         // 4. get feedback for letters
         feedback = currentTry.getFeedback(this.word);
-        feedback.put("Letters in word", Integer.toString(word.length()));
-        feedback.put("Tries left", Integer.toString(5 - tries.size()));
+        feedback.put("lettersInWord", Integer.toString(word.length()));
+        feedback.put("triesleft", Integer.toString(5 - tries.size()));
         // 5. check if last try was incorrect
         if(tries.size() == 5 && !feedback.get("lettersCorrect").equals(Integer.toString(word.length()))){
             feedback.put("message", "This was your fifth try. Game over, call endGame method to save name.");

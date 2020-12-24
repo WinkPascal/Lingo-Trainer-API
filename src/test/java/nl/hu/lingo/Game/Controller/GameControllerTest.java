@@ -1,5 +1,6 @@
 package nl.hu.lingo.Game.Controller;
 import nl.hu.lingo.Game.Controllers.GameController;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -62,11 +63,12 @@ public class GameControllerTest {
     void nextMove_newgame(String triesLeft, int tries){
         GameController gameController = new GameController();
         int newGameId = gameController.startGame();
-        Map<String, String> response = null;
+        String response = null;
         for (int i = 0; i < tries; i++) {
-            response = gameController.nextMove(newGameId,"fiets");
+            response = gameController.nextMove(Integer.toString(newGameId),"fiets");
         }
-        assertEquals(triesLeft, response.get("Tries left"));
+        JSONObject jsonObject = new JSONObject(response);
+        assertEquals(triesLeft, jsonObject.get("Tries left"));
     }
 
     //=====================================================================================================================
@@ -77,26 +79,26 @@ public class GameControllerTest {
     void gameFinished_game_isDone(){
         GameController gameController = new GameController();
         int newGameId = gameController.startGame();
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
 
-        int score = gameController.gameFinished(newGameId, "pascal");
+        int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
         assertTrue(score == 1);
     }
     @Test
     void gameFinished_game_isNotDone(){
         GameController gameController = new GameController();
         int newGameId = gameController.startGame();
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
-        gameController.nextMove(newGameId,"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
+        gameController.nextMove(Integer.toString(newGameId),"fiets");
         // stil has one try left
 
-        int score = gameController.gameFinished(newGameId, "pascal");
+        int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
         assertTrue(score == 0);
     }
 }
