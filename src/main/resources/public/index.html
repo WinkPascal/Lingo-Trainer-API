@@ -18,8 +18,8 @@
     <div class="game">
         <h2>Game</h2>
         <p>Message: </p><p id="message"></p>
-        <p>Tries left: </p><p id="tries"></p>
-        <p>Letters in word: </p><p id="lettersinword"></p>
+        <p id="tries"></p>
+        <p id="lettersinword"></p>
 
         <p id="feedbackTekst"></p>
         <p>10 seconden</p>
@@ -99,8 +99,8 @@
                 }
                 document.getElementById("message").innerText = response.message;
                 document.getElementById("feedbackTekst").innerText = response.feedback;
-                document.getElementById("tries").innerText = response.triesleft;
-                document.getElementById("lettersinword").innerText = response.lettersInWord;
+                document.getElementById("tries").innerText = "Tries left: "+response.triesleft;
+                document.getElementById("lettersinword").innerText = "Letters in word: " + response.lettersInWord;
                 showFeedback(response);
             });
     }

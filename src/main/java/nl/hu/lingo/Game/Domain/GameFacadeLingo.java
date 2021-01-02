@@ -26,7 +26,7 @@ public class GameFacadeLingo {
         Game game = gameDao.getGameById(gameId);
         if(game == null) return null;
 
-        Try currentTry = new Try(0, word, null, wordService, tryDao);
+        TryLingo currentTry = new TryLingo(0, word, null, wordService, tryDao);
         return game.nextMove(currentTry);
     }
 

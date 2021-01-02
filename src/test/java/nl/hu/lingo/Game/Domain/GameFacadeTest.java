@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -25,7 +26,6 @@ import static org.mockito.Mockito.when;
 class GameFacadeTest {
     private  WordService wordServiceMock;
     private GameDao gameDaoMock;
-    private String wordToGuess = "fiets";
     private TryDao tryDaoMock;
     private GameFacadeLingo gameFacade;
     private Game game;
@@ -51,7 +51,7 @@ class GameFacadeTest {
 
         gameDaoMock = mock(GamePostgressDaoImpl.class);
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, wordToGuess, new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(1, "fiets", new ArrayList<>(), roundDaoMock));
         game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
         when(gameDaoMock.getGameById(anyInt()))
                 .thenReturn(game);
@@ -78,17 +78,19 @@ class GameFacadeTest {
         assertTrue(resp.get("message").equals("Attempt was correct, new round has started")); // Assert
     }
 
+
+
     @Test
     void endGame_game_over(){
         List<Try> tries = new ArrayList<>();
-        tries.add(new Try(1, "",null, wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
-        tries.add(new Try(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new TryLingo(1, "",null, wordServiceMock, tryDaoMock));
+        tries.add(new TryLingo(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new TryLingo(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new TryLingo(1, "", null,wordServiceMock, tryDaoMock));
+        tries.add(new TryLingo(1, "", null,wordServiceMock, tryDaoMock));
 
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, "fiets", tries, roundDaoMock));
+        rounds.add(new RoundLingo(1, "fiets", tries, roundDaoMock));
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
         when(gameDaoMock.getGameById(anyInt()))
@@ -106,7 +108,7 @@ class GameFacadeTest {
     void endGame_game_not_over() {
         List<Try> tries = new ArrayList<>();
         List<Round> rounds = new ArrayList<>();
-        rounds.add(new Round(1, "fiets", tries, roundDaoMock));
+        rounds.add(new RoundLingo(1, "fiets", tries, roundDaoMock));
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
 
         when(gameDaoMock.getGameById(anyInt()))
@@ -187,9 +189,6 @@ class GameFacadeTest {
 
         for (int i = 0; i <= rounds; i++) {
             response = gameFacade.nextMove(1, "cavia");
-        }
-        if(GameOver){
-            int s= 0;
         }
 
         assertEquals(response.get("message").equals("Game over, because you already did 5 tries in this round. call endGame method to save name."), GameOver);

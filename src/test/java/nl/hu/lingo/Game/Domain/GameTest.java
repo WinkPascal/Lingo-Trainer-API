@@ -46,7 +46,7 @@ public class GameTest {
     void nextMove_no_rounds(){
         List<Round> rounds = new ArrayList<>();
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
-        Try attempt = new Try(1, "fiets",null, wordServiceMock, tryDaoMock);
+        TryLingo attempt = new TryLingo(1, "fiets",null, wordServiceMock, tryDaoMock);
 
         Map<String, String> response = game.nextMove(attempt);
 
@@ -87,7 +87,7 @@ public class GameTest {
         response.put("lettersWrong", "0");
 
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         when(roundMock.IsCorrect(anyObject()))
                 .thenReturn(response);
@@ -95,9 +95,8 @@ public class GameTest {
                 .thenReturn(1);
 
         Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
-        Map<String, String> feedback = game.nextMove(new Try(0, "",null, wordServiceMock, tryDaoMock));
+        Map<String, String> feedback = game.nextMove(new TryLingo(0, "",null, wordServiceMock, tryDaoMock));
 
-        assertEquals(feedback.get("Letters in word"), Integer.toString(nextWordLengthExpectation));
         assertEquals(feedback.get("message"), "Attempt was correct, new round has started");
     }
 
@@ -108,7 +107,7 @@ public class GameTest {
     @Test
     void endGame_round_active(){
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         when(roundMock.isActive())
                 .thenReturn(true);
@@ -123,7 +122,7 @@ public class GameTest {
     @Test
     void endGame_has_username() {
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         when(roundMock.isActive())
                 .thenReturn(false);
@@ -138,7 +137,7 @@ public class GameTest {
     @Test
     void endGame_has_username_and_is_active() {
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         when(roundMock.isActive())
                 .thenReturn(true);
@@ -153,7 +152,7 @@ public class GameTest {
     @Test
     void endGame() {
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         when(roundMock.isActive())
                 .thenReturn(false);
@@ -175,7 +174,7 @@ public class GameTest {
     @Test
     void startGame() {
         List<Round> rounds = new ArrayList<>();
-        Round roundMock = mock(Round.class);
+        RoundLingo roundMock = mock(RoundLingo.class);
         rounds.add(roundMock);
         int newGameId = 5132;
         when(gameDaoMock.newGame())

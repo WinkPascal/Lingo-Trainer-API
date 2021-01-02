@@ -1,13 +1,14 @@
 package nl.hu.lingo.Game.Controller;
+
 import nl.hu.lingo.Game.Controllers.GameController;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +28,18 @@ public class GameControllerTest {
         assertTrue(newGameId > 0);
     }
 
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void startGameTest_benchmark() {
+        GameController gameController = new GameController();
+        gameController.startGame();
+    }
+
+
     //=====================================================================================================================
     //================================================ getHighScore =======================================================
     //=====================================================================================================================
@@ -37,6 +50,16 @@ public class GameControllerTest {
         int newGameId = gameController.getHighscore("Pascal");
         assertTrue(newGameId == 5);
     }
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void getHighScore_existing_player_benchmark() {
+        GameController gameController = new GameController();
+        gameController.getHighscore("Pascal");
+    }
+
 
     @Test
     void getHighScore_non_existing_player(){
@@ -68,7 +91,7 @@ public class GameControllerTest {
             response = gameController.nextMove(Integer.toString(newGameId),"fiets");
         }
         JSONObject jsonObject = new JSONObject(response);
-        assertEquals(triesLeft, jsonObject.get("Tries left"));
+        assertEquals(triesLeft, jsonObject.get("triesleft"));
     }
 
     //=====================================================================================================================

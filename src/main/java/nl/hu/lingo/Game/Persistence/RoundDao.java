@@ -1,6 +1,7 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Round;
+import nl.hu.lingo.Game.Domain.RoundLingo;
 
 import java.util.List;
 

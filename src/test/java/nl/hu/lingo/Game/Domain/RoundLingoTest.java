@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class RoundTest {
+public class RoundLingoTest {
     private TryDao tryDaoMock;
     private  WordService wordServiceMock;
     private RoundDao roundDaoMock;
@@ -60,15 +60,17 @@ public class RoundTest {
 
         List<Try> tries = new ArrayList<>();
         for (int i = 0; i < amountPreviousTries; i++) {
-            tries.add(new Try(0, "zweep",null, wordServiceMock, tryDaoMock));
+            tries.add(new TryLingo(0, "zweep",null, wordServiceMock, tryDaoMock));
         }
 
-        Round round = new Round(28, "fiets", tries, roundDaoMock);
-        Try try_  = new Try(0, word, null, wordServiceMock, tryDaoMock);
+        RoundLingo round = new RoundLingo(28, "fiets", tries, roundDaoMock);
+        TryLingo try_  = new TryLingo(0, word, null, wordServiceMock, tryDaoMock);
 
         Map<String, String> response = round.IsCorrect(try_);
         assertEquals(response.get("message") , message);
     }
+
+
 
     //=====================================================================================================================
     //======================================================= isActive ====================================================
@@ -92,9 +94,9 @@ public class RoundTest {
     void isActive(int amountPreviousTries, boolean expectation){
         List<Try> tries = new ArrayList<>();
         for (int i = 0; i < amountPreviousTries; i++) {
-            tries.add(new Try(0, "zweep",null, wordServiceMock, tryDaoMock));
+            tries.add(new TryLingo(0, "zweep",null, wordServiceMock, tryDaoMock));
         }
-        Round round = new Round(0, "test", tries, roundDaoMock);
+        RoundLingo round = new RoundLingo(0, "test", tries, roundDaoMock);
 
         assertEquals(round.isActive(), expectation);
     }
@@ -106,7 +108,7 @@ public class RoundTest {
     @Test
     void getId(){
         int id = 10;
-        Round round = new Round(id, "test", null, roundDaoMock);
+        RoundLingo round = new RoundLingo(id, "test", null, roundDaoMock);
         assertEquals(round.getId(), id);
     }
 }

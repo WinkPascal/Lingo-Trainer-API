@@ -5,6 +5,7 @@ import nl.hu.lingo.Import.Application.WordServiceInterface;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class TryTest {
+public class TryLingoTest {
     //=====================================================================================================================
     //==================================================== getFeedback ====================================================
     //=====================================================================================================================
@@ -45,13 +46,23 @@ public class TryTest {
     @ParameterizedTest
     @MethodSource("getFeedback_set")
     void getFeedback(String correctWord, String attemptWord, int lettersCorrect, int lettersAbsent, int present){
-        Try try_ = new Try(0, attemptWord, null, null, null);
+        TryLingo try_ = new TryLingo(0, attemptWord, null, null, null);
 
         Map<String, String> feedback = try_.getFeedback(correctWord);
 
         assertTrue(feedback.get("lettersCorrect").equals(Integer.toString(lettersCorrect)));
         assertTrue(feedback.get("lettersInWord").equals(Integer.toString(present)));
         assertTrue(feedback.get("lettersWrong").equals(Integer.toString(lettersAbsent)));
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void getFeedback_benchmark() {
+        TryLingo try_ = new TryLingo(0, "baard", null, null, null);
+        try_.getFeedback("baard");
     }
 
     //=====================================================================================================================
@@ -87,7 +98,7 @@ public class TryTest {
         WordServiceInterface wordServiceMock = mock(WordService.class);
         when(wordServiceMock.getAllWordsWithLength(anyInt()))
                 .thenReturn(Arrays.asList("pizza"));
-        Try try_ = new Try(0, attemptWord,null, wordServiceMock, null);
+        TryLingo try_ = new TryLingo(0, attemptWord,null, wordServiceMock, null);
 
         Map<String, String> feedbackMap = try_.CheckSpellingContraints();
 
@@ -96,5 +107,19 @@ public class TryTest {
         } else{
             assertTrue(feedbackMap.get("feedback").equals(feedback));
         }
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void CheckSpellingContraints_benchmark() {
+        WordServiceInterface wordServiceMock = mock(WordService.class);
+        when(wordServiceMock.getAllWordsWithLength(anyInt()))
+                .thenReturn(Arrays.asList("pizza"));
+        TryLingo try_ = new TryLingo(0, "attemptWord",null, wordServiceMock, null);
+
+        try_.CheckSpellingContraints();
     }
 }

@@ -1,6 +1,7 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Try;
+import nl.hu.lingo.Game.Domain.TryLingo;
 import nl.hu.lingo.Import.Application.WordService;
 import nl.hu.lingo.Import.Application.WordServiceInterface;
 
@@ -36,7 +37,7 @@ public class TryPostgressDao implements TryDao {
                 String word = rs.getString("word");
                 int tryId = rs.getInt("id");
                 Timestamp datetime = rs.getTimestamp("datetime");
-                Try try_ = new Try(tryId, word, datetime, null, null);
+                TryLingo try_ = new TryLingo(tryId, word, datetime, wordService, tryDao);
                 tries.add(try_);
             }
         } catch (SQLException e ) {

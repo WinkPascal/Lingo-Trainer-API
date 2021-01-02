@@ -1,7 +1,9 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Round;
+import nl.hu.lingo.Game.Domain.RoundLingo;
 import nl.hu.lingo.Game.Domain.Try;
+import nl.hu.lingo.Game.Domain.TryLingo;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -41,7 +43,7 @@ public class RoundPostgressDao implements RoundDao {
                 TryDao tryPostgressDao = new TryPostgressDao(new DataBasePostgress());
                 List<Try> tries = tryPostgressDao.getTriesByRoundId(roundId);
                 RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
-                Round round = new Round(roundId, word,tries, roundDao);
+                RoundLingo round = new RoundLingo(roundId, word,tries, roundDao);
                 rounds.add(round);
             }
         } catch (SQLException e ) {

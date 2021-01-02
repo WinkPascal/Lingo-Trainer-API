@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -20,21 +21,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class WordFilterLingoTest {
-    private PostgressWordsDao postgressWordsDaoMock;
-    private FileReadDao fileReadDaoMock;
-
-    @BeforeEach
-    void beforeEach(){
-        this.postgressWordsDaoMock = mock(PostgressWordsDao.class);
-        this.fileReadDaoMock = mock(FileReadDao.class);
-
-        List<String> wordsFiveLetters = new ArrayList<>();
-        wordsFiveLetters.add("braam");
-        wordsFiveLetters.add("fiets");
-        wordsFiveLetters.add("stoom");
-        when(postgressWordsDaoMock.readWordsFilterByWordLength(anyInt()))
-                .thenReturn(wordsFiveLetters);
-    }
 
     static Stream<Arguments> word_Test_lengths() {
         return Stream.of(
@@ -60,14 +46,56 @@ public class WordFilterLingoTest {
 
         assertEquals(isNull, word == null);
     }
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void pickwordForGame_benchmark() {
+        PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
+        FileReadDao fileReadDao = new FileReadDao();
+
+        WordFilter wordFilter = new WordFilterLingo(postgressWordsDao, fileReadDao, 5);
+        wordFilter.pickwordForGame();
+    }
 
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void getAllWordsWithLength_Test(int length, boolean isNull){
+        PostgressWordsDao postgressWordsDaoMock = mock(PostgressWordsDao.class);
+        FileReadDao fileReadDaoMock = mock(FileReadDao.class);
+
+        List<String> wordsFiveLetters = new ArrayList<>();
+        wordsFiveLetters.add("braam");
+        wordsFiveLetters.add("fiets");
+        wordsFiveLetters.add("stoom");
+        when(postgressWordsDaoMock.readWordsFilterByWordLength(anyInt()))
+                .thenReturn(wordsFiveLetters);
+
         WordFilter wordFilter = new WordFilterLingo(postgressWordsDaoMock, fileReadDaoMock, length);
 
         List<String> words = wordFilter.getAllWordsWithLength();
 
         assertEquals(isNull, words == null);
+    }
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Fork(value = 1)
+    @Warmup(iterations = 2)
+    @Measurement(iterations = 1)
+    public void getAllWordsWithLength_benchmark() {
+        PostgressWordsDao postgressWordsDaoMock = mock(PostgressWordsDao.class);
+        FileReadDao fileReadDaoMock = mock(FileReadDao.class);
+
+        List<String> wordsFiveLetters = new ArrayList<>();
+        wordsFiveLetters.add("braam");
+        wordsFiveLetters.add("fiets");
+        wordsFiveLetters.add("stoom");
+        when(postgressWordsDaoMock.readWordsFilterByWordLength(anyInt()))
+                .thenReturn(wordsFiveLetters);
+
+        WordFilter wordFilter = new WordFilterLingo(postgressWordsDaoMock, fileReadDaoMock, 5);
+
+        wordFilter.getAllWordsWithLength();
     }
 }

@@ -25,18 +25,6 @@ public class GameLingo implements Game {
         this.roundDao = roundDao;
     }
 
-    private Round getLastRound(){
-        Round lastRound = null;
-        int biggestId = 0;
-        for (Round round : rounds) {
-            int roundId = round.getId();
-            if (biggestId < roundId) {
-                lastRound = round;
-            }
-        }
-        return lastRound;
-    }
-
     @Override
     public Map<String, String> nextMove(Try currentTry) {
         Round currentRound = getLastRound();
@@ -56,7 +44,7 @@ public class GameLingo implements Game {
                 if (feedback.get("lettersCorrect").equals("7")) nextWordLength = 5;
 
                 String word = newRound(nextWordLength);
-                feedback.replace("Letters in word", Integer.toString(word.length()));
+                feedback.replace("lettersInWord", Integer.toString(word.length()));
                 feedback.replace("triesleft", "5");
                 feedback.put("message", "Attempt was correct, new round has started");
             } else{
@@ -85,9 +73,20 @@ public class GameLingo implements Game {
         return id;
     }
 
+    private Round getLastRound(){
+        Round lastRound = null;
+        int biggestId = 0;
+        for (Round round : rounds) {
+            int roundId = round.getId();
+            if (biggestId < roundId) {
+                lastRound = round;
+            }
+        }
+        return lastRound;
+    }
     private String newRound(int length){
         String word = wordService.pickwordForGame(length);
-        Round round = new Round(0, word, null, roundDao);
+        RoundLingo round = new RoundLingo(0, word, null, roundDao);
         round.save(this.id);
         return word;
     }

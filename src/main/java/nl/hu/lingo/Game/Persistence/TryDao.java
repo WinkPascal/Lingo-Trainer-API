@@ -1,6 +1,7 @@
 package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Try;
+import nl.hu.lingo.Game.Domain.TryLingo;
 
 import java.util.List;
 
