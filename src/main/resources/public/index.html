@@ -3,60 +3,85 @@
     <title>index</title>
 </head>
 <body>
-    <h1>Lingo</h1>
+    <div class ="game">
+        <div class="WichGame">
+            <a>game id:</a>
+            <input type="text" id="gameId"/> <br>
+            <button type="button" onclick="startgame()">start new game</button>
+        </div>
+        <div class="highscore">
+            <p id="highscore"></p>
+            <input type="text" id="userName"/> <br>
+            <input type="button" onclick="getHighscore()" value="get highscore">
+        </div>
 
-    <div class="WichGame">
-        <a>game id:</a>
-        <input type="text" id="gameId"/> <br>
-        <input type="button" onclick="startgame()" value="start new game">
+
+        <div class="playingField">
+            <a id="message">-</a><br>
+            <a id="tries">-</a><br>
+            <a id="lettersinword">-</a><br>
+            <a id="feedbackTekst">-</a><br>
+
+            <div id="feedback" class="feedback"></div>
+
+            <input type="text" id="attempt"/>
+            <button onclick="nextMove()">submit</button>
+        </div>
+
+        <div class="endgame">
+            <h3>end game</h3>
+            <p id="score"></p>
+            <input type="text" id="userName_end_game"/> <br>
+            <button type="button" onclick="endGame()">end game</button>
+        </div>
     </div>
-    <div class="highscore">
-        <p id="highscore"></p>
-        <input type="text" id="userName"/> <br>
-        <input type="button" onclick="getHighscore()" value="get highscore">
-    </div>
-    <div class="game">
-        <h2>Game</h2>
-        <p>Message: </p><p id="message"></p>
-        <p id="tries"></p>
-        <p id="lettersinword"></p>
 
-        <p id="feedbackTekst"></p>
-        <p>10 seconden</p>
-
-        <input type="text" id="attempt"/>
-        <button onclick="nextMove()">submit</button>
-    </div>
-
-    <div id="feedback" class="feedback">
-
-    </div>
-
-    <div>
-        <h3>end game</h3>
-        <p id="score"></p>
-        <input type="text" id="userName_end_game"/> <br>
-        <input type="button" onclick="endGame()" value="end game">
-    </div>
 <style>
-    .WichGame{
-        width: 200px;
-        height: 100px;
-        border: 2px solid black;
+    .game{
+        position: relative;
+        width: 700px;
+        height: 900px;
+        border-radius: 20px;
+        border: 2px solid blue;
+        margin-left: calc(50% - 350px);
     }
-    .WichGame #gameId {
-        width: 40px;
+    .game .WichGame{
+        position: relative;
+        width: 340px;
+        height: 150px;
+        float: left;
     }
-    .highscore{
-        width: 200px;
+    .game .WichGame #gameId {
+        width: 50px;
+    }
+
+    .game .highscore{
+        position: relative;
+        width: 340px;
         height: 150px;
         border: 2px solid black;
+        float: right;
     }
-    .game{
-        width:400px;
+
+    .game .playingField{
+        top: 150px;
+        position: relative;
+        width: 100%;
         border: 2px solid black;
+        height: 550px;
     }
-    .feedback div{
+    .game .playingField a{
+        position: relative;
+        top:-150px;
+    }
+    .game .playingField .feedback{
+        height: 300px;
+        position: relative;
+        top:-60px;
+        width: 300px;
+        background-color: cadetblue;
+    }
+    .game .playingField .feedback div{
         float:left;
         position: relative;
         width: 30px;
@@ -65,6 +90,73 @@
         color: white;
         text-align: center;
         font-size: 30px;
+    }
+    .game .playingField input{
+        width: 300px;
+        height: 40px;
+        position: relative;
+        border: 2px solid #4CAF50;
+        top:-30px;
+        border-radius: 20px;
+        font-size: 20px;
+    }
+
+    .game .playingField button{
+        position: relative;
+        top:-30px;
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .game .playingField button:hover {
+        background-color: white;
+        color: #4CAF50;
+        border: 2px solid #4CAF50;
+    }
+
+    .game .endgame{
+        height: 150px;
+        width: 100%;
+        position: fixed;
+        border-top: 2px solid blue;
+        bottom: 100px;
+    }
+    .game .endgame input{
+        position: relative;
+        width: 300px;
+        height: 40px;
+        border: 2px solid blue;
+        border-radius: 20px;
+        font-size: 20px;
+    }
+    .game .endgame button{
+        position: relative;
+        background-color: cornflowerblue; /* Green */
+        border: none;
+        color: white;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .game .endgame button:hover {
+        background-color: white;
+        color: cornflowerblue;
+        border: 2px solid cornflowerblue;
     }
 </style>
 </body>
@@ -93,14 +185,14 @@
             .then(response => response.json())
             .then(function (response) {
                 console.log(response);
-                if(document.getElementById("message").innerText == "Attempt was correct, new round has started"){
+                if(document.getElementById("message").innerHTML == "Attempt was correct, new round has started"){
                     var feedbackElement = document.getElementById("feedback");
                     feedbackElement.innerHTML = '';
                 }
-                document.getElementById("message").innerText = response.message;
-                document.getElementById("feedbackTekst").innerText = response.feedback;
-                document.getElementById("tries").innerText = "Tries left: "+response.triesleft;
-                document.getElementById("lettersinword").innerText = "Letters in word: " + response.lettersInWord;
+                document.getElementById("message").innerHTML = response.message;
+                document.getElementById("feedbackTekst").innerHTML = response.feedback;
+                document.getElementById("tries").innerHTML = "Tries left: "+response.triesleft;
+                document.getElementById("lettersinword").innerHTML = "Letters in word: " + response.lettersInWord;
                 showFeedback(response);
             });
     }
