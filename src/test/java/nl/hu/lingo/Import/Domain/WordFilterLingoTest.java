@@ -3,6 +3,7 @@ package nl.hu.lingo.Import.Domain;
 import nl.hu.lingo.Import.Persistence.DatabasePostgress;
 import nl.hu.lingo.Import.Persistence.FileReadDao;
 import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
+import nl.hu.lingo.Import.Persistence.WordsDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -38,14 +39,21 @@ public class WordFilterLingoTest {
     @ParameterizedTest
     @MethodSource("word_Test_lengths")
     void pickwordForGame_Test(int length, boolean isNull){
-        PostgressWordsDao postgressWordsDao = new PostgressWordsDao(new DatabasePostgress());
-        FileReadDao fileReadDao = new FileReadDao();
+        WordsDao wordDaoMock = mock(WordsDao.class);
+        List<String> words = new ArrayList<>();
+        words.add("fiets");
+        words.add("fiets");
+        words.add("fiets");
+        when(wordDaoMock.readWordsFilterByWordLength(anyInt()))
+                .thenReturn(words);
+        FileReadDao fileReadDao = mock(FileReadDao.class);
 
-        WordFilter wordFilter = new WordFilterLingo(postgressWordsDao, fileReadDao, length);
+        WordFilter wordFilter = new WordFilterLingo(wordDaoMock, fileReadDao, length);
         String word = wordFilter.pickwordForGame();
 
         assertEquals(isNull, word == null);
     }
+
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @Fork(value = 1)
@@ -78,6 +86,7 @@ public class WordFilterLingoTest {
 
         assertEquals(isNull, words == null);
     }
+
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @Fork(value = 1)

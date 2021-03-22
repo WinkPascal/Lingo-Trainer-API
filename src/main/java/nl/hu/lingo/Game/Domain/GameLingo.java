@@ -32,7 +32,7 @@ public class GameLingo implements Game {
         Map<String, String> feedback = new HashMap<>();
         if(currentRound == null){
             feedback.put("message", "Game over, call endGame method to save name.");
-            feedback.replace("triesleft", "0");
+            feedback.put("triesleft", "0");
         } else{
             feedback = currentRound.IsCorrect(currentTry);
             if(feedback.get("message") != null) return feedback;
@@ -84,6 +84,7 @@ public class GameLingo implements Game {
         }
         return lastRound;
     }
+
     private String newRound(int length){
         String word = wordService.pickwordForGame(length);
         RoundLingo round = new RoundLingo(0, word, null, roundDao);

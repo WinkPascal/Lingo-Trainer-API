@@ -112,20 +112,9 @@ public class GameControllerTest {
     //=====================================================================================================================
     //==================================================== nextMove =======================================================
     //=====================================================================================================================
-    static Stream<Arguments> nextMove_newgame_set() {
-        return Stream.of(
-                // five letter words
-                Arguments.of("4", 1),
-                Arguments.of("3", 2),
-                Arguments.of("2", 3),
-                Arguments.of("1", 4),
-                Arguments.of("0", 5)
-                );
-    }
 
-    @ParameterizedTest
-    @MethodSource("nextMove_newgame_set")
-    void nextMove_newgame(String triesLeft, int tries){
+    @Test
+    void nextMove_newgame(){
         Game game = new GameLingo(1, null, new ArrayList<>(), gameDaoMock, wordServiceMock, roundDaoMock);
         when(gameDaoMock.getGameById(anyInt()))
                 .thenReturn(game);
@@ -133,12 +122,14 @@ public class GameControllerTest {
 
         GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.startGame();
-        String response = null;
-        for (int i = 0; i < tries; i++) {
-            response = gameController.nextMove(newGameId,"fiets");
-        }
+        gameController.nextMove(newGameId,"fiets");
+        gameController.nextMove(newGameId,"fiets");
+        gameController.nextMove(newGameId,"fiets");
+        gameController.nextMove(newGameId,"fiets");
+        String response = gameController.nextMove(newGameId,"fiets");
+
         JSONObject jsonObject = new JSONObject(response);
-        assertEquals(triesLeft, jsonObject.get("triesleft"));
+        assertEquals("0", jsonObject.get("triesleft"));
     }
 
     //=====================================================================================================================
