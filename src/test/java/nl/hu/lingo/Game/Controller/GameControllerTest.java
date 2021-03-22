@@ -28,7 +28,6 @@ public class GameControllerTest {
         assertTrue(newGameId > 0);
     }
 
-
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @Fork(value = 1)
@@ -38,7 +37,6 @@ public class GameControllerTest {
         GameController gameController = new GameController();
         gameController.startGame();
     }
-
 
     //=====================================================================================================================
     //================================================ getHighScore =======================================================
@@ -50,6 +48,7 @@ public class GameControllerTest {
         int newGameId = gameController.getHighscore("Pascal");
         assertTrue(newGameId == 5);
     }
+
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
     @Fork(value = 1)
@@ -59,7 +58,6 @@ public class GameControllerTest {
         GameController gameController = new GameController();
         gameController.getHighscore("Pascal");
     }
-
 
     @Test
     void getHighScore_non_existing_player(){
@@ -80,7 +78,8 @@ public class GameControllerTest {
                 Arguments.of("1", 4),
                 Arguments.of("0", 5)
                 );
-    };
+    }
+
     @ParameterizedTest
     @MethodSource("nextMove_newgame_set")
     void nextMove_newgame(String triesLeft, int tries){
@@ -111,6 +110,7 @@ public class GameControllerTest {
         int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
         assertTrue(score == 1);
     }
+
     @Test
     void gameFinished_game_isNotDone(){
         GameController gameController = new GameController();
