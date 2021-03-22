@@ -1,7 +1,7 @@
 package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.*;
-import nl.hu.lingo.Import.Application.WordService;
+import nl.hu.lingo.Import.Service.WordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

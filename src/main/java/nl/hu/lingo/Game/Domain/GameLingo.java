@@ -2,7 +2,7 @@ package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.GameDao;
 import nl.hu.lingo.Game.Persistence.RoundDao;
-import nl.hu.lingo.Import.Application.WordServiceInterface;
+import nl.hu.lingo.Import.Service.WordServiceInterface;
 
 import java.util.HashMap;
 import java.util.List;

@@ -5,4 +5,4 @@ import java.util.List;
 public interface WordFilter {
     String pickwordForGame();
     List<String> getAllWordsWithLength();
-    }
+}

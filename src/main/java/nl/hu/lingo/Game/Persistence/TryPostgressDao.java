@@ -2,8 +2,8 @@ package nl.hu.lingo.Game.Persistence;
 
 import nl.hu.lingo.Game.Domain.Try;
 import nl.hu.lingo.Game.Domain.TryLingo;
-import nl.hu.lingo.Import.Application.WordService;
-import nl.hu.lingo.Import.Application.WordServiceInterface;
+import nl.hu.lingo.Import.Service.WordService;
+import nl.hu.lingo.Import.Service.WordServiceInterface;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -3,14 +3,13 @@ package nl.hu.lingo.Game.Controller;
 import nl.hu.lingo.Game.Controllers.GameController;
 import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Game.Persistence.*;
-import nl.hu.lingo.Import.Application.WordService;
+import nl.hu.lingo.Import.Service.WordService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 

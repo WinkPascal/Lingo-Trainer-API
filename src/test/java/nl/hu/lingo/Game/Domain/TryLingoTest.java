@@ -1,7 +1,7 @@
 package nl.hu.lingo.Game.Domain;
 
-import nl.hu.lingo.Import.Application.WordService;
-import nl.hu.lingo.Import.Application.WordServiceInterface;
+import nl.hu.lingo.Import.Service.WordService;
+import nl.hu.lingo.Import.Service.WordServiceInterface;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

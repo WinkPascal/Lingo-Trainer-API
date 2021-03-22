@@ -1,48 +1,55 @@
-package nl.hu.lingo.Import.Application;
+package nl.hu.lingo.Import.Controller;
 
+import nl.hu.lingo.Import.Persistence.FileReadDao;
+import nl.hu.lingo.Import.Persistence.WordsDao;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class WordServiceTest {
+public class WordControllerTest {
 
-    private WordServiceInterface wordService;
+    private WordsDao wordDaoMock;
+    private FileReadDao fileReadDao;
 
     @BeforeEach
     void beforeEach() {
-        wordService = new WordService();
+        wordDaoMock = mock(WordsDao.class);
+        fileReadDao = mock(FileReadDao.class);
     }
     //==============================================================================================================
     //==========================================pickwordForGame=====================================================
     //==============================================================================================================
 
-    static Stream<Arguments> pickWordForGameSupportedLengthTest_words() {
-        return Stream.of(
-                Arguments.of(5, true),
-                Arguments.of(6, true),
-                Arguments.of(7, true)
-        );
-    }
+    @Test
+    void pickWordForGameSupportedLengthTest() {
+        List<String> words = new ArrayList<>();
+        words.add("fiets");
+        words.add("fiets");
+        words.add("fiets");
+        when(wordDaoMock.readWordsFilterByWordLength(anyInt()))
+            .thenReturn(words);
 
-    @ParameterizedTest
-    @MethodSource("pickWordForGameSupportedLengthTest_words")
-    void pickWordForGameSupportedLengthTest(int length, boolean lengthIsCorrect) {
-        String word = wordService.pickwordForGame(length);
+        WordController wordController = new WordController(wordDaoMock, fileReadDao);
+        String word = wordController.pickwordForGame(5);
         boolean correctLength = false;
-        if(word.length() == length){
+        if(word.length() == 5){
             correctLength = true;
         }
-        assertEquals(correctLength, lengthIsCorrect);
 
+        assertTrue(correctLength);
     }
 
     static Stream<Arguments> provideUnSupportedLengths() {
@@ -59,7 +66,9 @@ public class WordServiceTest {
     @ParameterizedTest
     @MethodSource("provideUnSupportedLengths")
     void pickWordForGameUnsupportedLengthTest(int length, boolean expectation) {
-        String word = wordService.pickwordForGame(length);
+        WordController wordController = new WordController(wordDaoMock, fileReadDao);
+
+        String word = wordController.pickwordForGame(length);
         assertEquals(expectation, word == null);
     }
 
@@ -78,8 +87,10 @@ public class WordServiceTest {
     @ParameterizedTest
     @MethodSource("provideSupportedLengths")
     void GetAllWordsWithSupportedLengthTest(int length, boolean expectation) {
+        WordController wordController = new WordController(wordDaoMock, fileReadDao);
+
         boolean correctLength = true;
-        List<String> words = wordService.getAllWordsWithLength(length);
+        List<String> words = wordController.getAllWordsWithLength(length);
         if(words == null) {
             correctLength = false;
         } else{
@@ -106,8 +117,10 @@ public class WordServiceTest {
     @ParameterizedTest
     @MethodSource("provideUnSupportedLengths_GetAllWordsWithUnSupportedLengthTest")
     void GetAllWordsWithUnSupportedLengthTest(int length, List<String> expectation) {
-        List<String> words = wordService.getAllWordsWithLength(length);
+        WordController wordController = new WordController(wordDaoMock, fileReadDao);
 
-        assertTrue(expectation == words);
+        List<String> words = wordController.getAllWordsWithLength(length);
+
+        assertSame(expectation, words);
     }
 }

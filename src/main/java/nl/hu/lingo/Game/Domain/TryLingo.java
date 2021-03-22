@@ -1,7 +1,7 @@
 package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.TryDao;
-import nl.hu.lingo.Import.Application.WordServiceInterface;
+import nl.hu.lingo.Import.Service.WordServiceInterface;
 
 import java.sql.*;
 import java.util.HashMap;

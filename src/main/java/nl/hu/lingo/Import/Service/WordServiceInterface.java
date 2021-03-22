@@ -1,4 +1,4 @@
-package nl.hu.lingo.Import.Application;
+package nl.hu.lingo.Import.Service;
 
 import java.util.List;
 

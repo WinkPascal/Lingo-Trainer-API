@@ -1,13 +1,12 @@
 package nl.hu.lingo.Game.Domain;
 
 import nl.hu.lingo.Game.Persistence.*;
-import nl.hu.lingo.Import.Application.WordService;
+import nl.hu.lingo.Import.Service.WordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;

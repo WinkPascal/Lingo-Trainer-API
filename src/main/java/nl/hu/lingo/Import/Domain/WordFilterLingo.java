@@ -2,6 +2,7 @@ package nl.hu.lingo.Import.Domain;
 
 import nl.hu.lingo.Import.Persistence.FileReadDao;
 import nl.hu.lingo.Import.Persistence.PostgressWordsDao;
+import nl.hu.lingo.Import.Persistence.WordsDao;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WordFilterLingo implements WordFilter {
-    private PostgressWordsDao postgressWordsDao;
+    private WordsDao postgressWordsDao;
     private FileReadDao fileReadDao;
     private int lenght;
 
-    public WordFilterLingo(PostgressWordsDao postgressWordsDao, FileReadDao fileReadDao, int lenght){
+    public WordFilterLingo(WordsDao postgressWordsDao, FileReadDao fileReadDao, int lenght){
         this.postgressWordsDao = postgressWordsDao;
         this.fileReadDao = fileReadDao;
         this.lenght = lenght;
