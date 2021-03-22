@@ -29,9 +29,6 @@ public class WordControllerTest {
         wordDaoMock = mock(WordsDao.class);
         fileReadDao = mock(FileReadDao.class);
     }
-    //==============================================================================================================
-    //==========================================pickwordForGame=====================================================
-    //==============================================================================================================
 
     @Test
     void pickWordForGameSupportedLengthTest() {
@@ -72,10 +69,6 @@ public class WordControllerTest {
         assertEquals(expectation, word == null);
     }
 
-    //==============================================================================================================
-    //==========================================getAllWordsWithLength===============================================
-    //==============================================================================================================
-
     static Stream<Arguments> provideSupportedLengths() {
         return Stream.of(
                 Arguments.of(5, true),
@@ -114,6 +107,7 @@ public class WordControllerTest {
                 Arguments.of(89571, null)
         );
     }
+
     @ParameterizedTest
     @MethodSource("provideUnSupportedLengths_GetAllWordsWithUnSupportedLengthTest")
     void GetAllWordsWithUnSupportedLengthTest(int length, List<String> expectation) {

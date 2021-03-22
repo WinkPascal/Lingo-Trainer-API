@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -19,9 +20,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class TryLingoTest {
-    //=====================================================================================================================
-    //==================================================== getFeedback ====================================================
-    //=====================================================================================================================
 
     static Stream<Arguments> getFeedback_set() {
         return Stream.of(
@@ -50,9 +48,9 @@ public class TryLingoTest {
 
         Map<String, String> feedback = try_.getFeedback(correctWord);
 
-        assertTrue(feedback.get("lettersCorrect").equals(Integer.toString(lettersCorrect)));
-        assertTrue(feedback.get("lettersInWord").equals(Integer.toString(present)));
-        assertTrue(feedback.get("lettersWrong").equals(Integer.toString(lettersAbsent)));
+        assertEquals(Integer.toString(lettersCorrect), feedback.get("lettersCorrect"));
+        assertEquals(Integer.toString(present), feedback.get("lettersInWord"));
+        assertEquals(Integer.toString(lettersAbsent), feedback.get("lettersWrong"));
     }
 
     @Benchmark
@@ -64,10 +62,6 @@ public class TryLingoTest {
         TryLingo try_ = new TryLingo(0, "baard", null, null, null);
         try_.getFeedback("baard");
     }
-
-    //=====================================================================================================================
-    //======================================== CheckSpellingContraints ====================================================
-    //=====================================================================================================================
 
     static Stream<Arguments> CheckSpellingContraints_set() {
         return Stream.of(

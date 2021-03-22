@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class WordFilterLingoTest {
-
     static Stream<Arguments> word_Test_lengths() {
         return Stream.of(
                 Arguments.of(-1, true),

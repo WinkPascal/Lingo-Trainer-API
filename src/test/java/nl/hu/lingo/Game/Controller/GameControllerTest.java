@@ -7,15 +7,11 @@ import nl.hu.lingo.Import.Service.WordService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,10 +33,6 @@ public class GameControllerTest {
         tryDaoMock = mock(TryPostgressDao.class);
         roundDaoMock = mock(RoundPostgressDao.class);
     }
-
-    //=====================================================================================================================
-    //=============================================== startGameTest =======================================================
-    //=====================================================================================================================
 
     @Test
     void startGameTest(){
@@ -72,10 +64,6 @@ public class GameControllerTest {
 
         gameController.startGame();
     }
-
-    //=====================================================================================================================
-    //================================================ getHighScore =======================================================
-    //=====================================================================================================================
 
     @Test
     void getHighScore_existing_player(){
@@ -109,10 +97,6 @@ public class GameControllerTest {
         assertEquals(0, newGameId);
     }
 
-    //=====================================================================================================================
-    //==================================================== nextMove =======================================================
-    //=====================================================================================================================
-
     @Test
     void nextMove_newgame(){
         Game game = new GameLingo(1, null, new ArrayList<>(), gameDaoMock, wordServiceMock, roundDaoMock);
@@ -131,10 +115,6 @@ public class GameControllerTest {
         JSONObject jsonObject = new JSONObject(response);
         assertEquals("0", jsonObject.get("triesleft"));
     }
-
-    //=====================================================================================================================
-    //======================================================= getId =======================================================
-    //=====================================================================================================================
 
     @Test
     void gameFinished_game_isDone(){

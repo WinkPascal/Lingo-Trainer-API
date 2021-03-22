@@ -69,12 +69,12 @@ class GameFacadeTest {
 
         int id = gameFacade.startGame(); // Act
 
-        assertTrue(id == 15); // Assert
+        assertEquals(id, 15); // Assert
         // ik test nu ook deze functie, terwijl dat misschien niet helemnal de bedoeling is
         // ,maar ik wil aantonen dat er echt een game met een ronde wordt gestart met het goede woord
         // Hierdoor probeer ik ook met de test tegelijk de systeem documentatie te schrijven.
         Map<String, String> resp = gameFacade.nextMove(id, "fiets");
-        assertTrue(resp.get("message").equals("Attempt was correct, new round has started")); // Assert
+        assertEquals(resp.get("message"), "Attempt was correct, new round has started"); // Assert
     }
 
 
@@ -99,7 +99,7 @@ class GameFacadeTest {
 
         int score = gameFacade.endGame(18, "Pascal");
 
-        assertTrue(score == 5);
+        assertEquals(score, 5);
     }
 
 
@@ -117,7 +117,7 @@ class GameFacadeTest {
 
         int score = gameFacade.endGame(18, "Pascal");
 
-        assertTrue(score == 0);
+        assertEquals(score, 0);
     }
 
     @Test
@@ -126,14 +126,14 @@ class GameFacadeTest {
                 .thenReturn(5);
         int score = gameFacade.getHighscore("Pascal");
 
-        assertTrue(score == 5);
+        assertEquals(score, 5);
     }
 
     @Test
     void getHighScore_person_does_not_exist(){
         int score = gameFacade.getHighscore("Pascal");
 
-        assertTrue(score == 0);
+        assertEquals(score, 0);
     }
 
     static Stream<Arguments> nextMove_check_word_spelling_Test_words() {

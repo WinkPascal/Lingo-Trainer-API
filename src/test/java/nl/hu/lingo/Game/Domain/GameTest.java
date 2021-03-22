@@ -24,11 +24,11 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class GameTest {
-
     private GameDao gameDaoMock;
     private WordServiceInterface wordServiceMock;
     private TryDao tryDaoMock;
     private RoundDao roundDaoMock;
+
     @BeforeEach
     void beforeEach(){
         gameDaoMock = mock(GamePostgressDaoImpl.class);
@@ -38,9 +38,6 @@ public class GameTest {
 
         tryDaoMock = mock(TryPostgressDao.class);
     }
-    //=====================================================================================================================
-    //====================================================== nextMove =====================================================
-    //=====================================================================================================================
 
     @Test
     void nextMove_no_rounds(){
@@ -99,10 +96,6 @@ public class GameTest {
 
         assertEquals(feedback.get("message"), "Attempt was correct, new round has started");
     }
-
-    //=====================================================================================================================
-    //====================================================== endGame ======================================================
-    //=====================================================================================================================
 
     @Test
     void endGame_round_active(){
@@ -166,10 +159,6 @@ public class GameTest {
 
         assertEquals(game.endGame("pascal"), score);
     }
-
-    //=====================================================================================================================
-    //===================================================== startGame =====================================================
-    //=====================================================================================================================
 
     @Test
     void startGame() {
