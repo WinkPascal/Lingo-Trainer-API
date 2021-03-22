@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class GameFacadeTest {
-    private  WordService wordServiceMock;
+    private WordService wordServiceMock;
     private GameDao gameDaoMock;
     private TryDao tryDaoMock;
     private GameFacadeLingo gameFacade;
@@ -58,7 +58,7 @@ class GameFacadeTest {
 
         tryDaoMock = mock(TryPostgressDao.class);
 
-        gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock);
+        gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
     }
 
     @Test

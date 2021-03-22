@@ -1,21 +1,43 @@
 package nl.hu.lingo.Game.Controller;
 
 import nl.hu.lingo.Game.Controllers.GameController;
+import nl.hu.lingo.Game.Domain.*;
+import nl.hu.lingo.Game.Persistence.*;
+import nl.hu.lingo.Import.Application.WordService;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class GameControllerTest {
+    private static WordService wordServiceMock;
+    private static GameDao gameDaoMock;
+    private static TryDao tryDaoMock;
+    private static RoundDao roundDaoMock;
+
+    @BeforeEach
+    void beforeEach() {
+        wordServiceMock = mock(WordService.class);
+        gameDaoMock = mock(GamePostgressDaoImpl.class);
+        tryDaoMock = mock(TryPostgressDao.class);
+        roundDaoMock = mock(RoundPostgressDao.class);
+    }
 
     //=====================================================================================================================
     //=============================================== startGameTest =======================================================
@@ -23,7 +45,14 @@ public class GameControllerTest {
 
     @Test
     void startGameTest(){
-        GameController gameController = new GameController();
+        doNothing().when(tryDaoMock).save(anyInt(), anyString());
+        when(gameDaoMock.newGame())
+                .thenReturn(100);
+        when(wordServiceMock.pickwordForGame(5))
+                .thenReturn("fiets");
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.startGame();
         assertTrue(newGameId > 0);
     }
@@ -34,7 +63,14 @@ public class GameControllerTest {
     @Warmup(iterations = 2)
     @Measurement(iterations = 1)
     public void startGameTest_benchmark() {
-        GameController gameController = new GameController();
+        doNothing().when(tryDaoMock).save(anyInt(), anyString());
+        when(gameDaoMock.newGame())
+                .thenReturn(100);
+        when(wordServiceMock.pickwordForGame(5))
+                .thenReturn("fiets");
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+        GameController gameController = new GameController(gameFacade);
+
         gameController.startGame();
     }
 
@@ -44,9 +80,13 @@ public class GameControllerTest {
 
     @Test
     void getHighScore_existing_player(){
-        GameController gameController = new GameController();
+        when(gameDaoMock.getHighscore(anyString()))
+                .thenReturn(5);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+        GameController gameController = new GameController(gameFacade);
+
         int newGameId = gameController.getHighscore("Pascal");
-        assertTrue(newGameId == 5);
+        assertEquals(5, newGameId);
     }
 
     @Benchmark
@@ -55,15 +95,19 @@ public class GameControllerTest {
     @Warmup(iterations = 2)
     @Measurement(iterations = 1)
     public void getHighScore_existing_player_benchmark() {
-        GameController gameController = new GameController();
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         gameController.getHighscore("Pascal");
     }
 
     @Test
     void getHighScore_non_existing_player(){
-        GameController gameController = new GameController();
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.getHighscore("Klaas");
-        assertTrue(newGameId == 0);
+        assertEquals(0, newGameId);
     }
 
     //=====================================================================================================================
@@ -83,11 +127,16 @@ public class GameControllerTest {
     @ParameterizedTest
     @MethodSource("nextMove_newgame_set")
     void nextMove_newgame(String triesLeft, int tries){
-        GameController gameController = new GameController();
+        Game game = new GameLingo(1, null, new ArrayList<>(), gameDaoMock, wordServiceMock, roundDaoMock);
+        when(gameDaoMock.getGameById(anyInt()))
+                .thenReturn(game);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.startGame();
         String response = null;
         for (int i = 0; i < tries; i++) {
-            response = gameController.nextMove(Integer.toString(newGameId),"fiets");
+            response = gameController.nextMove(newGameId,"fiets");
         }
         JSONObject jsonObject = new JSONObject(response);
         assertEquals(triesLeft, jsonObject.get("triesleft"));
@@ -99,29 +148,42 @@ public class GameControllerTest {
 
     @Test
     void gameFinished_game_isDone(){
-        GameController gameController = new GameController();
+        List<Round> rounds = new ArrayList<Round>();
+        rounds.add(new RoundLingo(1, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(2, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(3, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(4, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(5, "fiets", new ArrayList<>(), roundDaoMock));
+        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
+        when(gameDaoMock.getGameById(anyInt()))
+                .thenReturn(game);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.startGame();
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
 
         int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
-        assertTrue(score == 1);
+        assertEquals(0, score);
     }
 
     @Test
     void gameFinished_game_isNotDone(){
-        GameController gameController = new GameController();
+        List<Round> rounds = new ArrayList<Round>();
+        rounds.add(new RoundLingo(1, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(2, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(3, "fiets", new ArrayList<>(), roundDaoMock));
+        rounds.add(new RoundLingo(4, "fiets", new ArrayList<>(), roundDaoMock));
+        Game game = new GameLingo(1, null, rounds, gameDaoMock, wordServiceMock, roundDaoMock);
+        when(gameDaoMock.getGameById(anyInt()))
+                .thenReturn(game);
+        GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
+
+        GameController gameController = new GameController(gameFacade);
         int newGameId = gameController.startGame();
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
-        gameController.nextMove(Integer.toString(newGameId),"fiets");
+
         // stil has one try left
 
         int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
-        assertTrue(score == 0);
+        assertEquals(score, 0);
     }
 }

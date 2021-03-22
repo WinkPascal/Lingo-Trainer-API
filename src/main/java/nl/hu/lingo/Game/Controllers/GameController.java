@@ -3,36 +3,23 @@ package nl.hu.lingo.Game.Controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.hu.lingo.Game.Domain.*;
-import nl.hu.lingo.Game.Persistence.*;
-import nl.hu.lingo.Import.Application.WordService;
-import nl.hu.lingo.Import.Application.WordServiceInterface;
-import org.springframework.web.bind.annotation.*;
+import org.openjdk.jmh.annotations.State;
 
 import java.util.Map;
 
-@RestController
 public class GameController {
+    GameFacadeLingo gameFacade;
 
-    @GetMapping("/startGame")
+    public GameController(GameFacadeLingo gameFacade) {
+        this.gameFacade = gameFacade;
+    }
+
     public int startGame(){
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordServiceInterface wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
-
         return gameFacade.startGame();
     }
 
-    @PostMapping("/nextMove")
-    public String nextMove(@RequestParam("gameId") String gameId, @RequestParam("word") String word) {
-        Database database = new DataBasePostgress();
-        WordServiceInterface wordService = new WordService();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        TryDao tryDao = new TryPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
-
-        Map<String, String> feedback = gameFacade.nextMove(Integer.parseInt(gameId), word);
+    public String nextMove(int gameId, String word) {
+        Map<String, String> feedback = gameFacade.nextMove(gameId, word);
 
         //convert to json
         ObjectMapper objectMapper = new ObjectMapper();
@@ -45,31 +32,12 @@ public class GameController {
         return json;
     }
 
-    @PostMapping("/gameFinished")
-    public int gameFinished(@RequestParam("id") String id, @RequestParam("username") String username) {
-        if(id == "" || username == "") return 0;
-
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordService wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
-
-        int score = gameFacade.endGame(Integer.parseInt(id), username);
-        return score;
+    public int gameFinished(String id, String username) {
+        if(id.equals("") || username.equals("")) return 0;
+        return gameFacade.endGame(Integer.parseInt(id), username);
     }
 
-    @GetMapping("/getHighscore/{username}")
-    public int getHighscore(@PathVariable("username") String username) {
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordService wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao);
-
-        int score = gameFacade.getHighscore(username);
-        return score;
+    public int getHighscore(String username) {
+        return gameFacade.getHighscore(username);
     }
 }

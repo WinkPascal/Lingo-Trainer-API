@@ -49,6 +49,7 @@ public class RoundLingo implements Round {
     public boolean isActive() {
         return tries.size() < 5;
     }
+
     public void save(int gameid){
         roundDao.save(word, gameid);
     }

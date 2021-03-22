@@ -8,18 +8,18 @@ public class GameFacadeLingo {
     private GameDao gameDao;
     private WordServiceInterface wordService;
     private TryDao tryDao;
+    private RoundDao roundDao;
 
-    public GameFacadeLingo(GameDao gameDao, WordServiceInterface wordService, TryDao tryDao){
+    public GameFacadeLingo(GameDao gameDao, WordServiceInterface wordService, TryDao tryDao, RoundDao roundDao){
         this.gameDao = gameDao;
         this.wordService = wordService;
         this.tryDao = tryDao;
+        this.roundDao = roundDao;
     }
 
     public int startGame() {
-        RoundDao roundDao = new RoundPostgressDao(new DataBasePostgress());
-        Game game = new GameLingo(0, null, null, gameDao, wordService,roundDao);
-        int id = game.startGame();
-        return id;
+        Game game = new GameLingo(0, null, null, gameDao, wordService, roundDao);
+        return game.startGame();
     }
 
     public Map<String, String> nextMove(int gameId, String word) {
