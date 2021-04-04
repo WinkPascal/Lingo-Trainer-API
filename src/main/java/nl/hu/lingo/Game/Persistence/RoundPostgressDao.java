@@ -3,7 +3,6 @@ package nl.hu.lingo.Game.Persistence;
 import nl.hu.lingo.Game.Domain.Round;
 import nl.hu.lingo.Game.Domain.RoundLingo;
 import nl.hu.lingo.Game.Domain.Try;
-import nl.hu.lingo.Game.Domain.TryLingo;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,8 +19,7 @@ public class RoundPostgressDao implements RoundDao {
     }
 
     public void save(String word, int gameId) {
-        try{
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             String sql = "INSERT INTO round(word, gameid) VALUES ('"+word+"', "+gameId+")";
             stmt.executeUpdate(sql);
 
@@ -33,8 +31,7 @@ public class RoundPostgressDao implements RoundDao {
     public List<Round> getRoundsByGameId(int id){
         List<Round> rounds = new ArrayList<>();
         String query = "select * from round where gameId = "+id;
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 int roundId = rs.getInt("id");

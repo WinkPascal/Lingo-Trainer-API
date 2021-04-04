@@ -4,6 +4,7 @@ import nl.hu.lingo.Game.Persistence.GameDao;
 import nl.hu.lingo.Game.Persistence.RoundDao;
 import nl.hu.lingo.Import.Service.WordServiceInterface;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +57,15 @@ public class GameLingo implements Game {
 
     @Override
     public int endGame(String name) {
-        if(getLastRound().isActive() || this.userName != null){
-            return 0;
-        } else{
-            gameDao.update(this.id, name);
-            return gameDao.getScore(this.id);
+        try {
+            if(getLastRound().isActive() || this.userName != null){
+                return 0;
+            } else{
+                gameDao.update(this.id, name);
+                return gameDao.getScore(this.id);
+            }
+        } catch (NullPointerException e) {
+            throw new Error(e);
         }
     }
 

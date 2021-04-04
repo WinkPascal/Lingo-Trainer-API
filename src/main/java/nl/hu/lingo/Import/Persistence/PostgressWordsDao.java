@@ -16,15 +16,17 @@ public class PostgressWordsDao implements WordsDao {
 
     @Override
     public void refreshWordsWithLength(List<String> words, int wordLength) {
-        try{
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             String sql = "DELETE FROM words where LENGTH(word) = "+wordLength;
             stmt.executeUpdate(sql);
 
             for (String word: words) {
-                Statement stmt1 = conn.createStatement();
-                String sql1 = "INSERT INTO words(word) VALUES ('"+word+"')";
-                stmt1.executeUpdate(sql1);
+                try (Statement stmt1 = conn.createStatement()) {
+                    String sql1 = "INSERT INTO words(word) VALUES ('"+word+"')";
+                    stmt1.executeUpdate(sql1);
+                } catch (SQLException e ) {
+                    throw new Error(e);
+                }
             }
         } catch (SQLException e ) {
             throw new Error(e);
@@ -35,8 +37,7 @@ public class PostgressWordsDao implements WordsDao {
         List<String> words = new ArrayList<>();
 
         String query = "select word from words where LENGTH(word) = "+wordLength+"";
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 words.add(rs.getString("word"));
