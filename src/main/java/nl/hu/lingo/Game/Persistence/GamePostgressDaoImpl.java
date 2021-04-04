@@ -19,8 +19,7 @@ public class GamePostgressDaoImpl implements GameDao {
         Game game = null;
         WordServiceInterface wordService = new WordService();
         String query = "select * from game where id = "+id;
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String username = rs.getString("username");
@@ -38,8 +37,7 @@ public class GamePostgressDaoImpl implements GameDao {
     @Override
     public int newGame(){
         int id = 0;
-        try{
-            Statement  stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             String sql = "INSERT INTO Game(username) VALUES (null)";
             stmt.executeUpdate(sql);
 
@@ -59,8 +57,7 @@ public class GamePostgressDaoImpl implements GameDao {
 
     @Override
     public void update(int id, String name){
-        try{
-            Statement  stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             String sql = "UPDATE game set username = '"+name+"' WHERE id = "+ id;
             stmt.executeUpdate(sql);
         } catch (SQLException e ) {
@@ -72,8 +69,7 @@ public class GamePostgressDaoImpl implements GameDao {
     public int getScore(int id){
         String query = "select count(r.id) as score from game g join round r on g.id = r.gameid where g.id = "+id;
         int score = 0;
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 score = rs.getInt("score");
@@ -92,8 +88,7 @@ public class GamePostgressDaoImpl implements GameDao {
                 "ORDER BY count(r.id) DESC " +
                 "LIMIT 1";
         int score = 0;
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 score = rs.getInt("score");

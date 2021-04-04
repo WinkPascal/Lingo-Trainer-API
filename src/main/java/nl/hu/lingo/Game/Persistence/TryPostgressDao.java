@@ -16,8 +16,7 @@ public class TryPostgressDao implements TryDao {
     }
 
     public void save(int roundId, String word){
-        try{
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             String sql = "INSERT INTO try(word, roundid, datetime) VALUES ('"+word+"', "+roundId+", current_timestamp)";
             stmt.executeUpdate(sql);
         } catch (SQLException e ) {
@@ -30,8 +29,7 @@ public class TryPostgressDao implements TryDao {
         TryDao tryDao = new TryPostgressDao(new DataBasePostgress());
         WordServiceInterface wordService = new WordService();
         String query = "select * from try where roundId = "+id;
-        try {
-            Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String word = rs.getString("word");
