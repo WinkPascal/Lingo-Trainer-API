@@ -1,7 +1,5 @@
 package nl.hu.lingo.Import.Persistence;
 
-
-import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
