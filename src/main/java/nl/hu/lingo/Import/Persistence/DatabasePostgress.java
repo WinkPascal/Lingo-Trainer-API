@@ -11,10 +11,10 @@ public class DatabasePostgress implements Database {
     public Connection getConn() {
         if(conn == null){
             try {
-                String url = "jdbc:postgresql://localhost/lingo";
+                String url = "jdbc:postgresql://ec2-54-247-158-179.eu-west-1.compute.amazonaws.com/desicr6n121p1p";
                 Properties props = new Properties();
-                props.setProperty("user","postgres");
-                props.setProperty("password","PascalWink1");
+                props.setProperty("user","stxyvzdgnzonia");
+                props.setProperty("password","3d07117c12dcbad6dec505b756ccf510a02ef8c71918222296478a89c6a3d990");
                 props.setProperty("ssl","false");
 
                 conn = DriverManager.getConnection(url, props);
