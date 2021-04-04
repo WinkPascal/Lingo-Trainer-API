@@ -28,31 +28,35 @@ public class GameLingo implements Game {
 
     @Override
     public Map<String, String> nextMove(Try currentTry) {
-        Round currentRound = getLastRound();
+        try {
+            Round currentRound = getLastRound();
 
-        Map<String, String> feedback = new HashMap<>();
-        if(currentRound == null){
-            feedback.put("message", "Game over, call endGame method to save name.");
-            feedback.put("triesleft", "0");
-        } else{
-            feedback = currentRound.IsCorrect(currentTry);
-            if(feedback.get("message") != null) return feedback;
-
-            if(feedback.get("lettersWrong").equals("0")) {
-                int nextWordLength = 0;
-                if (feedback.get("lettersCorrect").equals("5")) nextWordLength = 6;
-                if (feedback.get("lettersCorrect").equals("6")) nextWordLength = 7;
-                if (feedback.get("lettersCorrect").equals("7")) nextWordLength = 5;
-
-                String word = newRound(nextWordLength);
-                feedback.replace("lettersInWord", Integer.toString(word.length()));
-                feedback.replace("triesleft", "5");
-                feedback.put("message", "Attempt was correct, new round has started");
+            Map<String, String> feedback = new HashMap<>();
+            if(currentRound == null){
+                feedback.put("message", "Game over, call endGame method to save name.");
+                feedback.put("triesleft", "0");
             } else{
-                feedback.put("message", "This was not the right word.");
+                feedback = currentRound.IsCorrect(currentTry);
+                if(feedback.get("message") != null) return feedback;
+
+                if(feedback.get("lettersWrong").equals("0")) {
+                    int nextWordLength = 0;
+                    if (feedback.get("lettersCorrect").equals("5")) nextWordLength = 6;
+                    if (feedback.get("lettersCorrect").equals("6")) nextWordLength = 7;
+                    if (feedback.get("lettersCorrect").equals("7")) nextWordLength = 5;
+
+                    String word = newRound(nextWordLength);
+                    feedback.replace("lettersInWord", Integer.toString(word.length()));
+                    feedback.replace("triesleft", "5");
+                    feedback.put("message", "Attempt was correct, new round has started");
+                } else{
+                    feedback.put("message", "This was not the right word.");
+                }
             }
+            return feedback;
+        } catch (NullPointerException e) {
+            throw new Error(e);
         }
-        return feedback;
     }
 
     @Override
