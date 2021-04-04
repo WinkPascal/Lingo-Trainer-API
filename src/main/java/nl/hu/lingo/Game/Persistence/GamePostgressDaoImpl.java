@@ -40,17 +40,17 @@ public class GamePostgressDaoImpl implements GameDao {
         try (Statement stmt = conn.createStatement()) {
             String sql = "INSERT INTO Game(username) VALUES (null)";
             stmt.executeUpdate(sql);
-
-
             String query = "select max(id)  from game";
-            Statement stmt1 = conn.createStatement();
-            ResultSet rs = stmt1.executeQuery(query);
-            while (rs.next()) {
-                id = rs.getInt("max");
+            try (Statement stmt1 = conn.createStatement()) {
+                ResultSet rs = stmt1.executeQuery(query);
+                while (rs.next()) {
+                    id = rs.getInt("max");
+                }
+            } catch (SQLException e ) {
+                throw new Error("Problem", e);
             }
-
         } catch (SQLException e ) {
-            throw new Error("Problem", e);
+            throw new Error("newGame", e);
         }
         return id;
     }

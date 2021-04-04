@@ -10,14 +10,12 @@
 	</parent>
 	<groupId>nl.hu</groupId>
 	<artifactId>lingo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-
+	<version>2.1.7.RELEASE</version>
 	<name>lingo</name>
 	<description>lingo applicatie voor een assigment van de hogeschool utrecht. Gemaakt door Pascal Wink.</description>
 
 	<properties>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.source>11</maven.compiler.source>
+		<java.version>11</java.version>
 
 		<sonar.projectKey>WinkPascal_Lingo-Trainer-API</sonar.projectKey>
 		<sonar.organization>winkpascal</sonar.organization>
@@ -79,7 +77,11 @@
 			<version>1.20</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4-1206-jdbc42</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -89,7 +91,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<argLine>-Xmx2048m</argLine>
-				i88</configuration>
+				</configuration>
 			</plugin>
 
 			<plugin>
