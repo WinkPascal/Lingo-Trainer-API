@@ -1,6 +1,6 @@
 package nl.hu.lingo.Game.Controller;
 
-import nl.hu.lingo.Game.Controllers.GameController;
+import nl.hu.lingo.Game.Service.GameService;
 import nl.hu.lingo.Game.Domain.*;
 import nl.hu.lingo.Game.Persistence.*;
 import nl.hu.lingo.Import.Service.WordService;
@@ -43,7 +43,7 @@ public class GameControllerTest {
                 .thenReturn("fiets");
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         int newGameId = gameController.startGame();
         assertTrue(newGameId > 0);
     }
@@ -60,7 +60,7 @@ public class GameControllerTest {
         when(wordServiceMock.pickwordForGame(5))
                 .thenReturn("fiets");
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
 
         gameController.startGame();
     }
@@ -70,7 +70,7 @@ public class GameControllerTest {
         when(gameDaoMock.getHighscore(anyString()))
                 .thenReturn(5);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
 
         int newGameId = gameController.getHighscore("Pascal");
         assertEquals(5, newGameId);
@@ -84,7 +84,7 @@ public class GameControllerTest {
     public void getHighScore_existing_player_benchmark() {
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         gameController.getHighscore("Pascal");
     }
 
@@ -92,7 +92,7 @@ public class GameControllerTest {
     void getHighScore_non_existing_player(){
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         int newGameId = gameController.getHighscore("Klaas");
         assertEquals(0, newGameId);
     }
@@ -104,7 +104,7 @@ public class GameControllerTest {
                 .thenReturn(game);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         int newGameId = gameController.startGame();
         gameController.nextMove(newGameId,"fiets");
         gameController.nextMove(newGameId,"fiets");
@@ -129,7 +129,7 @@ public class GameControllerTest {
                 .thenReturn(game);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         int newGameId = gameController.startGame();
 
         int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
@@ -148,11 +148,10 @@ public class GameControllerTest {
                 .thenReturn(game);
         GameFacadeLingo gameFacade = new GameFacadeLingo(gameDaoMock, wordServiceMock, tryDaoMock, roundDaoMock);
 
-        GameController gameController = new GameController(gameFacade);
+        GameService gameController = new GameService(gameFacade);
         int newGameId = gameController.startGame();
 
         // stil has one try left
-
         int score = gameController.gameFinished(Integer.toString(newGameId), "pascal");
         assertEquals(score, 0);
     }

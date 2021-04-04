@@ -1,56 +1,42 @@
 package nl.hu.lingo.Game.Service;
 
-import nl.hu.lingo.Game.Controllers.GameController;
-import nl.hu.lingo.Game.Domain.GameFacadeLingo;
-import nl.hu.lingo.Game.Persistence.*;
-import nl.hu.lingo.Import.Service.WordService;
-import nl.hu.lingo.Import.Service.WordServiceInterface;
-import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.hu.lingo.Game.Domain.*;
 
-@RestController
+import java.util.Map;
+
 public class GameService {
-    @GetMapping("/startGame")
-    public int startGame() {
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordServiceInterface wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-        RoundDao roundDoa = new RoundPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao, roundDoa);
+    GameFacadeLingo gameFacade;
 
-        return (new GameController(gameFacade)).startGame();
+    public GameService(GameFacadeLingo gameFacade) {
+        this.gameFacade = gameFacade;
     }
 
-    @PostMapping("/nextMove")
-    public String nextMove(@RequestParam("gameId") String gameId, @RequestParam("word") String word) {
-        Database database = new DataBasePostgress();
-        WordServiceInterface wordService = new WordService();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        TryDao tryDao = new TryPostgressDao(database);
-        RoundDao roundDoa = new RoundPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao, roundDoa);
-        return (new GameController(gameFacade)).nextMove(Integer.parseInt(gameId), word);
+    public int startGame(){
+        return gameFacade.startGame();
     }
 
-    @PostMapping("/gameFinished")
-    public int gameFinished(@RequestParam("id") String id, @RequestParam("username") String username) {
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordService wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-        RoundDao roundDoa = new RoundPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao, roundDoa);
-        return (new GameController(gameFacade)).gameFinished(id, username);
-    }
-    @GetMapping("/getHighscore/{username}")
-    public int getHighscore(@PathVariable("username") String username) {
-        Database database = new DataBasePostgress();
-        GameDao gameRepository = new GamePostgressDaoImpl(database);
-        WordService wordService = new WordService();
-        TryDao tryDao = new TryPostgressDao(database);
-        RoundDao roundDoa = new RoundPostgressDao(database);
-        GameFacadeLingo gameFacade = new GameFacadeLingo(gameRepository, wordService, tryDao, roundDoa);
-        return (new GameController(gameFacade)).getHighscore(username);
+    public String nextMove(int gameId, String word) {
+        Map<String, String> feedback = gameFacade.nextMove(gameId, word);
 
+        //convert to json
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(feedback);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    public int gameFinished(String id, String username) {
+        if(id.equals("") || username.equals("")) return 0;
+        return gameFacade.endGame(Integer.parseInt(id), username);
+    }
+
+    public int getHighscore(String username) {
+        return gameFacade.getHighscore(username);
     }
 }
