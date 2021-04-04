@@ -61,15 +61,13 @@ public class GameLingo implements Game {
 
     @Override
     public int endGame(String name) {
-        try {
-            if(getLastRound().isActive() || this.userName != null){
-                return 0;
-            } else{
-                gameDao.update(this.id, name);
-                return gameDao.getScore(this.id);
-            }
-        } catch (NullPointerException e) {
-            throw new Error(e);
+        Round round = getLastRound();
+        if(round == null) return 0;
+        if(round.isActive() || this.userName != null){
+            return 0;
+        } else{
+            gameDao.update(this.id, name);
+            return gameDao.getScore(this.id);
         }
     }
 
